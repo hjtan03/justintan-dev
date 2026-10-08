@@ -1,0 +1,65 @@
+---
+title: "IDX Exchange Property Search"
+slug: "idx-exchange"
+featured: true
+order: 1
+role: "Software Engineering Intern"
+timeframe: "Jun 2026 – Sep 2026"
+stack:
+  ["React 19", "Node.js", "Express", "MySQL 8", "Docker", "Jest", "Supertest"]
+summary: "Full-stack property search over 54,000 real MLS listings, with natural language search backed by a validated query builder."
+---
+
+A Zillow-style property search built over twelve weeks during an SDE
+internship at IDX Exchange, running against a snapshot of real MLS/RETS
+data: roughly 54,000 listings and 15,000 open house records. The starting
+point was a Dockerized MySQL database. The end point was a tested React
+and Express application.
+
+The backend is a REST API with paginated, filterable search across city,
+ZIP, price range, beds, baths, and year built, plus property detail and
+open house endpoints. Every query is parameterized and the WHERE clause
+is assembled dynamically from only the filters actually supplied. On top
+of that sits a natural language search: a plain-English query goes to
+Claude, which extracts structured filters, and the backend validates
+every field before running it through the same query builder as the
+normal search path. The model never writes SQL.
+
+Most of the real work was in the data. The schema is legacy RETS, which
+means 126 columns in the main table and field names like `L_Keyword2` for
+bedroom count. Listing photos are stored as a JSON string that can be
+null or malformed, so they go through a defensive parser tested to full
+branch coverage. About 741 open house rows pointed at listings that
+didn't exist, which I found by scripting every listing ID against the
+live endpoint after first ruling out date corruption. Those now return a
+clean 404 because the endpoint verifies the property before querying. A
+legacy zero-date default on one column blocked index creation, and I
+spent a while treating that as a schema problem before tracing it to my
+own MySQL session's strict `sql_mode`.
+
+The decision I think about most is how the natural language search
+handles vague input. When a query says "cheap," the extractor returns
+null rather than a guessed price. A guessed number would be a wrong
+filter applied silently, and the user would never know why their results
+looked off. Returning null and displaying the filters the system
+understood puts the gap in front of them where they can fix it. For the
+same reason, city casing is normalized in SQL rather than in the prompt:
+I can't control model output, but I control my own query.
+
+The subtlest bug was in the filter UI, where a slow earlier request could
+land after a faster later one and overwrite the newer results. The fix
+was a request-ID guard, with a test that resolves two mocked requests out
+of order so the regression can't come back quietly.
+
+Five indexes added after EXPLAIN analysis took the optimizer's estimated
+rows scanned on the combined filter query from roughly 36,000 to about
+18,000, moving from no usable index to an index range scan. Those are
+EXPLAIN estimates rather than measured latency. The project carries 52
+automated tests, with 96% line coverage on the main API route file, built
+on a branch-per-feature workflow with PR review.
+
+This was a guided internship project. The feature set and several of the
+debugging exercises came from the program's curriculum, and it runs
+locally rather than in production. The next things it needs are a
+normalized city column so the city index actually gets used, automated
+coverage on the search route, and a real deployment.

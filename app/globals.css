@@ -1,0 +1,8 @@
+/*
+ * Tailwind is wired up but intentionally minimal for the scaffold pass.
+ * Preflight (the browser-reset layer) is left out so the unstyled markup
+ * renders with browser defaults and the structure is easy to check.
+ * Swap these two lines for `@import "tailwindcss";` in the design pass.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);

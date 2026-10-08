@@ -1,0 +1,86 @@
+---
+title: "Pinpoint"
+slug: "pinpoint"
+featured: true
+order: 2
+role: "Co-Founder & Founding Engineer"
+timeframe: "Jan 2026 – present"
+stack:
+  [
+    "React Native (Expo)",
+    "Express",
+    "Python",
+    "Supabase",
+    "OpenAI API",
+    "Google Places",
+  ]
+summary: "Turns saved travel videos into map pins by extracting places from speech, captions, and on-screen text."
+---
+
+People save travel videos constantly and then never do anything with
+them. A restaurant gets named out loud in a thirty second clip, a
+location tag flashes on screen, and the information sits there in a
+format you can't search or plan against. Pinpoint pulls it out.
+
+A user shares a TikTok or Instagram post from the iOS share sheet. The
+backend creates a job, and a Python worker claims it, fetches the media
+with yt-dlp or gallery-dl, and pulls audio through ffmpeg for
+transcription. If the transcript comes back under fifty words, an OCR
+gate fires and samples twenty evenly spaced frames through a vision
+model. Transcript, caption, and any OCR text then feed a single
+extraction call, and each candidate place carries a record of which
+signal produced it. Google Places enriches each candidate, a
+name-similarity step tags the match as exact, fuzzy, or weak, and
+confidence scoring boosts candidates that several independent signals
+agree on. Nothing becomes a pin without the user approving it from a
+review screen that sorts candidates into Strong, Likely, and
+Worth-a-look.
+
+The failure mode that drove most of the engineering was bare names
+resolving to the wrong city. A Chicago coffee video produced a confident
+match on a restaurant in Memphis. A video mentioning "Bodega" matched a
+Los Angeles importer on one run and a Charlotte deli on another, both at
+maximum confidence, because the Places API will always find you
+something. The fix was a geo-consistency pass that clusters a video's
+resolved candidates and demotes geographic outliers, plus plumbing
+TikTok's own location metadata through as a hint.
+
+Then the fix broke on its own terms. A post titled "Matcha Spots in
+Japan" is legitimately multi-city, and the distance check demoted all
+five correct candidates. A related regression treated a prefecture-level
+tag as a venue and collapsed an entire video into one pin labeled
+"Kyoto." The resolution was label-first classification, separating
+place-type tags from venue names before the geographic check runs, and
+making the clustering aware that a video can have more than one valid
+center. The general lesson is the one I'd lead with: a correctness check
+tuned on single-location videos encodes an assumption about the content,
+and the moment the assumption breaks it fails confidently in the other
+direction.
+
+The hardest decision with real alternatives was how to read on-screen
+text. A local OCR engine had been built earlier and removed for being too
+heavy. The options were re-adding it, calling a cloud vision API,
+sampling at one frame per second, or sampling on scene changes. I chose a
+gated call on a fixed twenty frames at low detail, because every other
+option had unbounded cost on long videos while fixed sampling is
+predictable, and low detail tested as effective as high. Gating on short
+transcripts means the expensive path only runs when the cheap path has
+already failed, which keeps it under a cent per triggered video.
+
+Smaller things that cost real time: transcription mangled a venue name
+into a phonetic near-miss, so the extraction prompt now prefers caption
+spelling over audio when they disagree. A flat penalty on short "generic"
+names was quietly suppressing legitimate Korean and Japanese venues,
+since four characters means something different per script. And a patched
+map library allocating roughly 176,000 style spans for a single long
+route produced a 3.4 GB out-of-memory crash on device, which is now
+capped.
+
+Current state: submitted to the App Store as Pinpoint Travel Maps, with
+TestFlight builds out, error monitoring, Sign in with Apple, and account
+deletion in place. The core loop works reliably on tested posts.
+Extraction quality across the long tail is not yet measured, since the
+eval harness exists but no baseline run has been recorded, and the
+scrapers depend on upstream tools that have broken twice in recent weeks,
+which a daily canary now watches for. Real user numbers and a measured
+accuracy baseline are the next things it needs.
