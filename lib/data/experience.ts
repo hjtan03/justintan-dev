@@ -4,16 +4,12 @@ export type ExperienceEntry = {
   timeframe: string;
   /** Optional link to the related project page or grid entry. */
   href?: string;
+  /** Education entries render under a separate heading. */
+  kind?: "work" | "education";
 };
 
 /**
  * Experience timeline, most recent first.
- *
- * VERIFY BEFORE SHIPPING. CLAUDE.md asks for a short timeline but no
- * experience data was provided, so every string below was lifted from
- * frontmatter in content/projects/*.mdx or from lib/data/projects.ts.
- * Nothing was invented, but the entries may be incomplete (no
- * Northwestern or USC degree lines, since no dates exist for them).
  */
 export const experience: ExperienceEntry[] = [
   {
@@ -21,17 +17,36 @@ export const experience: ExperienceEntry[] = [
     role: "Software Engineering Intern",
     timeframe: "Jun 2026 – Sep 2026",
     href: "/projects/idx-exchange",
+    kind: "work",
   },
   {
     org: "Pinpoint",
     role: "Co-Founder & Founding Engineer",
     timeframe: "Jan 2026 – present",
     href: "/projects/pinpoint",
+    kind: "work",
   },
   {
-    org: "USC",
-    role: "Undergraduate research",
+    org: "University of South Carolina",
+    role: "Undergraduate Researcher, Naval Autonomous Maritime Perception",
     timeframe: "Apr 2024 – May 2025",
     href: "/#maritime-perception",
+    kind: "work",
+  },
+];
+
+export const education: ExperienceEntry[] = [
+  {
+    org: "Northwestern University",
+    role: "M.S. Computer Science (AI and Robotics), Minor in Entrepreneurship",
+    timeframe: "Sept 2025 – present",
+    kind: "education",
+  },
+  {
+    org: "University of South Carolina",
+    role: "B.S. Computer Engineering, Minor in Mathematics, Honors College",
+    // TODO: confirm start year
+    timeframe: "Aug 2021 – May 2025",
+    kind: "education",
   },
 ];
