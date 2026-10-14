@@ -10,7 +10,7 @@ const links = [
 
 export function Hero() {
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="page pt-24 sm:pt-32 md:pt-36">
+    <section id="hero" aria-labelledby="hero-heading" className="page pt-20 sm:pt-28 md:pt-32">
       {/* The rule matches the ink width of the name, not the container. */}
       <div className="max-w-full w-fit">
         <h1 id="hero-heading" className="hero-name">

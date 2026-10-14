@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Newsreader } from "next/font/google";
+import { SiteHeader } from "@/components/SiteHeader";
 import { site } from "@/lib/data/site";
 import "./globals.css";
 
@@ -29,7 +30,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${newsreader.variable} ${instrumentSans.variable}`}>
-      <body className="min-h-dvh bg-bg text-fg">{children}</body>
+      <body className="min-h-dvh bg-bg text-fg">
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   );
 }

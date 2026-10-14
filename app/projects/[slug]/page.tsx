@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
-import { site } from "@/lib/data/site";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 
 type Params = { slug: string };
@@ -33,12 +31,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
 
   return (
     <main>
-      <nav aria-label="Breadcrumb" className="page pt-8">
-        <Link href="/" className="nav-link text-meta tracking-[0.02em]">
-          {site.name}
-        </Link>
-      </nav>
-      <article className="project-article page row pt-16 pb-24 sm:pt-20 sm:pb-32" style={asideOffset}>
+      <article className="project-article page row pt-14 pb-24 sm:pt-20 sm:pb-32" style={asideOffset}>
         <div className="aside">
           <p>{project.role}</p>
           <p>

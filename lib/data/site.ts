@@ -12,4 +12,11 @@ export const site = {
   // CLAUDE.md "Hero line (draft)"
   heroLine:
     "MS CS student at Northwestern working on applied AI. I build systems that turn messy real-world input, video, camera frames, natural language, into something structured and usable.",
+  /** Header anchors, in page order. Each id is a section id on the home page. */
+  nav: [
+    { id: "projects", label: "Projects" },
+    { id: "experience", label: "Experience" },
+    { id: "beyond-code", label: "Beyond code" },
+    { id: "contact", label: "Contact" },
+  ],
 };

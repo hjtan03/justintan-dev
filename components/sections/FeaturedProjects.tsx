@@ -24,6 +24,11 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
                 </Link>
               </h3>
               <p className="mt-4">{project.summary}</p>
+              <p className="mt-3 font-sans text-compact">
+                <Link href={`/projects/${project.slug}`} className="nav-link">
+                  Read the full writeup
+                </Link>
+              </p>
               <ul className="stack-list mt-4" aria-label="Stack">
                 {project.stack.map((item) => (
                   <li key={item}>{item}</li>

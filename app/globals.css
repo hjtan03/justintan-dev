@@ -88,6 +88,11 @@
     text-wrap: balance;
   }
 
+  /* Anchor targets clear the sticky header. */
+  html {
+    scroll-padding-top: 4.5rem;
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
@@ -231,14 +236,87 @@
     text-decoration-color: currentColor;
   }
 
-  /* Large titles that link: no underline at size, accent on hover. */
+  /* Large titles that link: accent at rest so they read as clickable
+     without hover, underline on hover and keyboard focus. */
   .title-link {
-    color: inherit;
+    color: var(--color-accent);
+    text-decoration: none;
+    text-underline-offset: 0.12em;
+  }
+  .title-link:hover,
+  .title-link:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  /* Sticky site header. Background matches the page; the rule appears
+     once the page has scrolled. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid transparent;
+    transition: border-color 150ms ease;
+  }
+  .site-header[data-scrolled] {
+    border-bottom-color: var(--color-rule);
+  }
+  .site-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 3.25rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+  }
+  .site-header-name {
+    color: var(--color-fg);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 120ms ease, opacity 200ms ease, transform 200ms ease;
+  }
+  .site-header-name:hover {
+    color: var(--color-accent);
+  }
+  /* On the home page the name waits until the hero name has scrolled past
+     the header. It stays in the DOM and becomes visible again on focus so
+     the home link is always reachable. */
+  .site-header-name[data-hidden] {
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+  }
+  .site-header-name[data-hidden]:focus-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header-name {
+      transition: color 120ms ease;
+    }
+  }
+  .site-nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .site-nav-link {
+    color: var(--color-muted);
     text-decoration: none;
     transition: color 120ms ease;
   }
-  .title-link:hover {
+  .site-nav-link:hover,
+  .site-nav-link[aria-current] {
     color: var(--color-accent);
+  }
+  /* Below 700px only the name remains; the page is short enough to scroll. */
+  @media (max-width: 699.98px) {
+    .site-nav {
+      display: none;
+    }
   }
 
   /* Hero link row and other standalone links: accent at rest. */
