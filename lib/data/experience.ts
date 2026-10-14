@@ -45,7 +45,6 @@ export const education: ExperienceEntry[] = [
   {
     org: "University of South Carolina",
     role: "B.S. Computer Engineering, Minor in Mathematics, Honors College",
-    // TODO: confirm start year
     timeframe: "Aug 2021 – May 2025",
     kind: "education",
   },

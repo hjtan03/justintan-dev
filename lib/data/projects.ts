@@ -20,7 +20,7 @@ export const gridProjects: GridProject[] = [
     context: "USC senior capstone, 5-person team",
     timeframe: "2024 – 2025",
     description:
-      "Android chess app that reads a physical board through the camera and plays or analyzes from the detected position. I planned the project and chose the stack, bringing prior AI and Android experience to the team: Java app layer calling Python through Chaquopy, python-chess for move generation, and a Roboflow-trained TFLite model for piece detection. Three difficulty tiers, each a different approach rather than one engine tuned down, with random moves at easy, heuristic position scoring at medium, and Stockfish at hard. I built the UI, settings, and board theme customization. Because detection isn't reliable enough to trust blindly, the board has a lock/unlock mode: when the model misreads a position, the user corrects pieces by hand and relocks so no accidental moves register. Distributed to testers via Firebase App Distribution, with 59 instrumented Espresso tests across 19 classes.",
+      "Android chess app that reads a physical board through the camera and plays or analyzes the position. I planned the project and chose the stack: Java calling Python through Chaquopy, python-chess for move generation, and a Roboflow-trained TFLite model for detection. Because detection isn't reliable enough to trust blindly, the board has a lock/unlock mode so a misread position can be corrected by hand and relocked. I built the UI, settings, and board theming.",
     stack: ["Java", "Android", "Chaquopy", "python-chess", "TFLite", "Roboflow"],
     repo: "https://github.com/hjtan03/ChAIss",
   },
@@ -30,7 +30,7 @@ export const gridProjects: GridProject[] = [
     context: "USC undergraduate research",
     timeframe: "Apr 2024 – May 2025",
     description:
-      "Computer vision pipeline for detecting and tracking small airborne objects against open sky, still in use at USC. YOLOX detection, cropping, Real-ESRGAN super-resolution on the crops, ResNet-50 classification, and DeepSORT tracking, chosen over ByteTrack and SORT after comparing all three. Designed the pipeline structure around existing models, with direction from my advisor. Caught a train/validation leak caused by splitting video-sampled frames at the image level rather than by source clip, which put near-identical adjacent frames on both sides of the split. Compiled training data from Roboflow and Kaggle and mentored undergraduates on the ML and Linux workflows.",
+      "Computer vision pipeline for detecting and tracking small airborne objects against open sky, still in use at USC. I designed the pipeline structure around existing models with direction from my advisor: YOLOX detection, Real-ESRGAN super-resolution on the crops, ResNet-50 classification, and DeepSORT tracking, chosen over ByteTrack and SORT after comparing all three. Caught a train/validation leak caused by splitting video-sampled frames at the image level, which put near-identical frames on both sides of the split.",
     stack: ["Python", "PyTorch", "YOLOX", "ResNet-50", "DeepSORT", "Real-ESRGAN"],
   },
   {

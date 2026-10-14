@@ -30,23 +30,25 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
 
   return (
     <main>
-      <nav aria-label="Breadcrumb">
-        <Link href="/">{site.name}</Link>
+      <nav aria-label="Breadcrumb" className="column pt-8">
+        <Link href="/" className="nav-link text-compact">
+          {site.name}
+        </Link>
       </nav>
-      <article>
+      <article className="column pt-16 pb-24 sm:pt-20 sm:pb-32">
         <header>
-          <h1>{project.title}</h1>
-          <p>
+          <h1 className="text-section sm:text-[2.125rem] sm:leading-[1.15]">{project.title}</h1>
+          <p className="mt-3 font-sans text-meta text-muted">
             {project.role}, {project.timeframe}
           </p>
-          <p>{project.summary}</p>
-          <ul>
+          <p className="mt-6 text-lede">{project.summary}</p>
+          <ul className="stack-list mt-5" aria-label="Stack">
             {project.stack.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
         </header>
-        {content}
+        <div className="prose mt-12 border-t border-rule pt-10">{content}</div>
       </article>
     </main>
   );

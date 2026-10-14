@@ -1,8 +1,232 @@
-/*
- * Tailwind is wired up but intentionally minimal for the scaffold pass.
- * Preflight (the browser-reset layer) is left out so the unstyled markup
- * renders with browser defaults and the structure is easy to check.
- * Swap these two lines for `@import "tailwindcss";` in the design pass.
- */
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Palette. Light is the default; dark follows the system preference. */
+/* ------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+  --bg: #fcfcfa;
+  --fg: #1a1a18;
+  --muted: #6b6b66;
+  --accent: #15418c;
+  --rule: #e4e3de;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #15161a;
+    --fg: #e8e8e4;
+    --muted: #9a9a94;
+    --accent: #8aaef2;
+    --rule: #2a2b30;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Design tokens exposed to Tailwind utilities.                       */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+
+  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
+
+  /* Type scale. Hero > section heading > project title > body > meta. */
+  --text-*: initial;
+  --text-display: clamp(2.5rem, 1.75rem + 3vw, 3.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.025em;
+  --text-lede: 1.3125rem;
+  --text-lede--line-height: 1.45;
+  --text-section: 1.625rem;
+  --text-section--line-height: 1.2;
+  --text-section--letter-spacing: -0.015em;
+  --text-title: 1.3125rem;
+  --text-title--line-height: 1.3;
+  --text-title--letter-spacing: -0.01em;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.65;
+  --text-compact: 0.9375rem;
+  --text-compact--line-height: 1.55;
+  --text-meta: 0.875rem;
+  --text-meta--line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-serif);
+    font-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-rule);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components                                                          */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* The single prose column every page is built on. */
+  .column {
+    width: 100%;
+    max-width: 40rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 40rem) {
+    .column {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  /* Links inside running text: underlined, text color, accent on hover. */
+  .text-link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-muted);
+    transition: color 120ms ease, text-decoration-color 120ms ease;
+  }
+  .text-link:hover {
+    color: var(--color-accent);
+    text-decoration-color: currentColor;
+  }
+
+  /* Hero link row and other standalone links: accent at rest. */
+  .nav-link {
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+  }
+  .nav-link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  /* Inline list of stack items separated by middle dots. */
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.125rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-muted);
+  }
+  /* Separator lives inside the preceding item so it never starts a line. */
+  .stack-list li:not(:last-child)::after {
+    content: "·";
+    margin-inline: 0.5rem;
+  }
+
+  /* MDX writeups and any other running prose. */
+  .prose {
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+  .prose > * + * {
+    margin-top: 1.25em;
+  }
+  .prose a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-muted);
+  }
+  .prose a:hover {
+    color: var(--color-accent);
+    text-decoration-color: currentColor;
+  }
+  .prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background-color: var(--color-rule);
+  }
+  .prose h2,
+  .prose h3 {
+    margin-top: 2em;
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 1.5em;
+  }
+  .prose ul {
+    list-style: disc;
+  }
+  .prose ol {
+    list-style: decimal;
+  }
+  .prose li + li {
+    margin-top: 0.4em;
+  }
+  .prose strong {
+    font-weight: 600;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion: one orchestrated hero entrance, nothing else.               */
+/* ------------------------------------------------------------------ */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: reveal 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
