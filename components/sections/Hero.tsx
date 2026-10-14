@@ -10,14 +10,16 @@ const links = [
 
 export function Hero() {
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="column pt-24 pb-20 sm:pt-32 sm:pb-24">
-      <h1 id="hero-heading" className="reveal text-display">
-        {site.name}
-      </h1>
-      <p className="reveal mt-6 max-w-[30ch] text-lede sm:max-w-none" style={{ "--reveal-delay": "90ms" } as React.CSSProperties}>
-        {site.heroLine}
-      </p>
-      <ul className="reveal mt-8 flex flex-wrap gap-x-6 gap-y-2 text-compact" style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
+    <section id="hero" aria-labelledby="hero-heading" className="page pt-24 sm:pt-32 md:pt-36">
+      {/* The rule matches the ink width of the name, not the container. */}
+      <div className="max-w-full w-fit">
+        <h1 id="hero-heading" className="hero-name">
+          {site.name}
+        </h1>
+        <div className="hero-rule" aria-hidden="true" />
+      </div>
+      <p className="hero-lede mt-8">{site.heroLine}</p>
+      <ul className="hero-links mt-10 flex flex-wrap gap-x-8 gap-y-2">
         {links.map((link) => (
           <li key={link.label}>
             <a

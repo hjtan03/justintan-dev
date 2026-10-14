@@ -37,21 +37,24 @@
   --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
 
-  /* Type scale. Hero > section heading > project title > body > meta. */
+  /* Type scale. Hero name > page title > feature title > lede > body > entry > compact > meta. */
   --text-*: initial;
-  --text-display: clamp(2.5rem, 1.75rem + 3vw, 3.5rem);
-  --text-display--line-height: 1.05;
-  --text-display--letter-spacing: -0.025em;
-  --text-lede: 1.3125rem;
+  --text-display: clamp(4.25rem, 13vw, 9rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.035em;
+  --text-page-title: clamp(2.25rem, 5vw, 3.25rem);
+  --text-page-title--line-height: 1.08;
+  --text-page-title--letter-spacing: -0.03em;
+  --text-feature: 2rem;
+  --text-feature--line-height: 1.1;
+  --text-feature--letter-spacing: -0.025em;
+  --text-lede: 1.35rem;
   --text-lede--line-height: 1.45;
-  --text-section: 1.625rem;
-  --text-section--line-height: 1.2;
-  --text-section--letter-spacing: -0.015em;
-  --text-title: 1.3125rem;
-  --text-title--line-height: 1.3;
-  --text-title--letter-spacing: -0.01em;
   --text-body: 1.125rem;
   --text-body--line-height: 1.65;
+  --text-entry: 1.125rem;
+  --text-entry--line-height: 1.3;
+  --text-entry--letter-spacing: -0.01em;
   --text-compact: 0.9375rem;
   --text-compact--line-height: 1.55;
   --text-meta: 0.875rem;
@@ -97,19 +100,120 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Components                                                          */
+/* Layout                                                              */
+/*                                                                     */
+/* The page is one container. Above 900px it holds a two-column grid:  */
+/* a 10rem margin column for quiet, scannable things (headings, dates, */
+/* roles, stacks), and a 40rem main column for everything meant to be  */
+/* read. Below 900px the margin content stacks above its main content. */
 /* ------------------------------------------------------------------ */
 @layer components {
-  /* The single prose column every page is built on. */
-  .column {
+  .page {
     width: 100%;
-    max-width: 40rem;
+    max-width: calc(10rem + 3rem + 40rem);
     margin-inline: auto;
     padding-inline: 1rem;
   }
   @media (min-width: 40rem) {
-    .column {
+    .page {
       padding-inline: 1.5rem;
+    }
+  }
+
+  /* One row of the layout: [aside][main]. */
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.75rem;
+  }
+
+  /* Margin-column content. */
+  .aside {
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-muted);
+    text-wrap: pretty;
+  }
+  .aside > * + * {
+    margin-top: 0.125rem;
+  }
+  .aside h2 {
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+  /* A section heading followed by a record's own annotations. */
+  .aside > h2 + * {
+    margin-top: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: 10rem minmax(0, 40rem);
+      column-gap: 3rem;
+      row-gap: 0;
+    }
+    .aside {
+      grid-column: 1;
+      text-align: right;
+      padding-top: var(--aside-offset, 0px);
+    }
+    .main {
+      grid-column: 2;
+    }
+  }
+
+  /* Vertical rhythm: big gaps between unlike things. */
+  .section {
+    margin-top: 6rem;
+  }
+  @media (min-width: 900px) {
+    .section {
+      margin-top: 8rem;
+    }
+  }
+
+  /* Repeated items of the same kind get a 1px rule between them. Stacked,
+     the rule spans the item; in two columns it stays in the main column
+     so the margin column stays quiet. */
+  .record + .record {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-rule);
+  }
+  @media (min-width: 900px) {
+    .record + .record {
+      padding-top: 0;
+      border-top: 0;
+    }
+    .record + .record > .main {
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-rule);
+    }
+    .record + .record > .aside {
+      padding-top: calc(1rem + var(--aside-offset, 0px));
+    }
+  }
+
+  /* Project page header: role and timeframe collapse above the title on
+     narrow screens like any margin content, but the stack is supplementary
+     and follows the body there. Above the breakpoint it sits in the margin
+     under the role and timeframe. */
+  .project-stack {
+    margin-top: 2rem;
+  }
+  @media (min-width: 900px) {
+    .project-article {
+      grid-template-rows: auto 1fr;
+    }
+    .project-article > .main {
+      grid-row: 1 / span 2;
+    }
+    .project-stack {
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 1rem;
+      text-align: right;
     }
   }
 
@@ -125,6 +229,16 @@
   .text-link:hover {
     color: var(--color-accent);
     text-decoration-color: currentColor;
+  }
+
+  /* Large titles that link: no underline at size, accent on hover. */
+  .title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+  .title-link:hover {
+    color: var(--color-accent);
   }
 
   /* Hero link row and other standalone links: accent at rest. */
@@ -156,6 +270,32 @@
     margin-inline: 0.5rem;
   }
 
+  /* Stacked vertical list of stack items, used in the margin column. */
+  .stack-stack {
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-muted);
+  }
+  .stack-stack li + li {
+    margin-top: 0.125rem;
+  }
+  /* Below the breakpoint it reads inline, like the other stack lists. */
+  @media (max-width: 899.98px) {
+    .stack-stack {
+      display: flex;
+      flex-wrap: wrap;
+      row-gap: 0.125rem;
+    }
+    .stack-stack li + li {
+      margin-top: 0;
+    }
+    .stack-stack li:not(:last-child)::after {
+      content: "·";
+      margin-inline: 0.5rem;
+    }
+  }
+
   /* MDX writeups and any other running prose. */
   .prose {
     font-size: var(--text-body);
@@ -185,8 +325,8 @@
   .prose h2,
   .prose h3 {
     margin-top: 2em;
-    font-size: var(--text-title);
-    line-height: var(--text-title--line-height);
+    font-size: var(--text-entry);
+    line-height: var(--text-entry--line-height);
   }
   .prose ul,
   .prose ol {
@@ -204,15 +344,67 @@
   .prose strong {
     font-weight: 600;
   }
+
+  /* Book setting for long writeups: paragraphs run on with a first-line
+     indent instead of a gap. The first paragraph, and the first after a
+     heading, stay flush. */
+  .prose-book > p + p {
+    margin-top: 0;
+    text-indent: 1.5em;
+  }
 }
 
 /* ------------------------------------------------------------------ */
-/* Motion: one orchestrated hero entrance, nothing else.               */
+/* Hero. The one place the accent appears at size, and the only motion */
+/* on the site: name rises, rule draws, then lede and links fade in.   */
 /* ------------------------------------------------------------------ */
-@keyframes reveal {
+.hero-name {
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
+  font-weight: 600;
+  animation: hero-rise 480ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+/* At the 4.25rem floor the name is wider than a 320px viewport's content
+   box, so the tracking closes up a little to hold it on one line. */
+@media (max-width: 359.98px) {
+  .hero-name {
+    letter-spacing: -0.055em;
+  }
+}
+
+.hero-rule {
+  height: 3px;
+  margin-top: 1.25rem;
+  background-color: var(--color-accent);
+  transform-origin: left center;
+  animation: hero-draw 500ms cubic-bezier(0.4, 0, 0.2, 1) 420ms both;
+}
+
+.hero-lede,
+.hero-links {
+  animation: hero-fade 360ms ease-out 760ms both;
+}
+
+.hero-lede {
+  font-style: italic;
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.hero-links {
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  line-height: var(--text-meta--line-height);
+  letter-spacing: 0.02em;
+}
+
+@keyframes hero-rise {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -220,13 +412,29 @@
   }
 }
 
-.reveal {
-  animation: reveal 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--reveal-delay, 0ms);
+@keyframes hero-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .hero-name,
+  .hero-rule,
+  .hero-lede,
+  .hero-links {
     animation: none;
   }
 }

@@ -9,6 +9,9 @@ type Params = { slug: string };
 
 export const dynamicParams = false;
 
+// Lines the margin text up with the cap height of the fluid page title.
+const asideOffset = { "--aside-offset": "calc(var(--text-page-title) * 0.52)" } as React.CSSProperties;
+
 export async function generateStaticParams(): Promise<Params[]> {
   const projects = await getAllProjects();
   return projects.map((p) => ({ slug: p.slug }));
@@ -30,25 +33,30 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
 
   return (
     <main>
-      <nav aria-label="Breadcrumb" className="column pt-8">
-        <Link href="/" className="nav-link text-compact">
+      <nav aria-label="Breadcrumb" className="page pt-8">
+        <Link href="/" className="nav-link text-meta tracking-[0.02em]">
           {site.name}
         </Link>
       </nav>
-      <article className="column pt-16 pb-24 sm:pt-20 sm:pb-32">
-        <header>
-          <h1 className="text-section sm:text-[2.125rem] sm:leading-[1.15]">{project.title}</h1>
-          <p className="mt-3 font-sans text-meta text-muted">
-            {project.role}, {project.timeframe}
+      <article className="project-article page row pt-16 pb-24 sm:pt-20 sm:pb-32" style={asideOffset}>
+        <div className="aside">
+          <p>{project.role}</p>
+          <p>
+            <time>{project.timeframe}</time>
           </p>
-          <p className="mt-6 text-lede">{project.summary}</p>
-          <ul className="stack-list mt-5" aria-label="Stack">
-            {project.stack.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </header>
-        <div className="prose mt-12 border-t border-rule pt-10">{content}</div>
+        </div>
+        <div className="main">
+          <header>
+            <h1 className="text-page-title">{project.title}</h1>
+            <p className="mt-6 font-serif text-lede italic text-muted">{project.summary}</p>
+          </header>
+          <div className="prose prose-book mt-8">{content}</div>
+        </div>
+        <ul className="project-stack stack-stack" aria-label="Stack">
+          {project.stack.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
       </article>
     </main>
   );

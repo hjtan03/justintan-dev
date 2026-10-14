@@ -1,13 +1,15 @@
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import { featuredVideos, personalNotes, youtubeChannelUrl } from "@/lib/data/personal";
 
+const asideOffset = { "--aside-offset": "0.33rem" } as React.CSSProperties;
+
 export function BeyondCode() {
   return (
-    <section id="beyond-code" aria-labelledby="beyond-code-heading" className="column pb-20 sm:pb-24">
-      <h2 id="beyond-code-heading" className="text-section">
-        Beyond code
-      </h2>
-      <div className="mt-8 space-y-8">
+    <section id="beyond-code" aria-labelledby="beyond-code-heading" className="page section row" style={asideOffset}>
+      <div className="aside">
+        <h2 id="beyond-code-heading">Beyond code</h2>
+      </div>
+      <div className="main space-y-8">
         <p>{personalNotes.violin}</p>
         {featuredVideos.map((video) => (
           <YouTubeEmbed key={video.id} video={video} />
