@@ -11,8 +11,8 @@ export const contentType = "image/png";
 // woff2 the page uses, so these are latin-only cuts of the upstream files.
 const font = (file: string) => readFile(path.join(process.cwd(), "app/fonts/og", file));
 
-// First sentence of the hero line: the card is read at roughly 500px wide.
-const positioning = site.heroLine.split(/(?<=\.)\s/)[0];
+// The hero line, as the page shows it, so the card cannot drift from it.
+const positioning = site.heroLine;
 
 export default async function OpenGraphImage() {
   const [sansSemiBold, sansMedium, serifItalic] = await Promise.all([
@@ -42,10 +42,10 @@ export default async function OpenGraphImage() {
           <div
             style={{
               marginTop: 40,
-              maxWidth: 820,
+              maxWidth: 1040,
               fontFamily: "Newsreader",
               fontStyle: "italic",
-              fontSize: 50,
+              fontSize: 37,
               lineHeight: 1.25,
               color: "#302d28",
             }}
