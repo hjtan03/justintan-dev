@@ -626,12 +626,16 @@
      screen-high void under the links. */
   min-height: min(calc(100svh - 3.25rem - 6rem - var(--hero-cut)), 52rem);
 }
-/* On short desktop viewports the natural hero is already taller than the
-   rule allows, so the top padding gives way first: 5rem at 650px tall,
-   8rem from about 1070px. */
+/* On short viewports the natural hero is already taller than the rule
+   allows, so the top padding gives way first. The middle term is the
+   viewport minus the space the hero's own content, the header and the
+   section gap need. */
+.hero {
+  padding-top: clamp(2.5rem, 100svh - 37.5rem, 5rem);
+}
 @media (min-width: 48rem) {
   .hero {
-    padding-top: clamp(5rem, 12svh, 8rem);
+    padding-top: clamp(3rem, 100svh - 42rem, 8rem);
   }
 }
 @media (min-width: 900px) {
@@ -711,6 +715,7 @@
 }
 
 .hero-lede,
+.hero-availability,
 .hero-links {
   animation: hero-fade 360ms ease-out 760ms both;
 }
@@ -720,6 +725,15 @@
   font-size: var(--text-lede);
   line-height: var(--text-lede--line-height);
   max-width: 46ch;
+}
+
+/* One step below the lede, muted, same voice. */
+.hero-availability {
+  font-style: italic;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  color: var(--color-text-muted);
+  max-width: 52ch;
 }
 
 .hero-links {
@@ -762,6 +776,7 @@
   .hero-name,
   .hero-rule,
   .hero-lede,
+  .hero-availability,
   .hero-links {
     animation: none;
   }
@@ -798,6 +813,7 @@
   .hero-name,
   .hero-rule,
   .hero-lede,
+  .hero-availability,
   .hero-links {
     animation: none;
   }

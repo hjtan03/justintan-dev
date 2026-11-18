@@ -38,8 +38,8 @@ export const experience: ExperienceEntry[] = [
 export const education: ExperienceEntry[] = [
   {
     org: "Northwestern University",
-    role: "M.S. Computer Science (AI and Robotics), Minor in Entrepreneurship",
-    timeframe: "Sept 2025 – present",
+    role: "M.S. Computer Science, Minor in Entrepreneurship",
+    timeframe: "Sept 2025 – Dec 2026",
     kind: "education",
   },
   {
