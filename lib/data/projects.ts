@@ -1,3 +1,5 @@
+import type { FigureData } from "@/components/Figure";
+
 export type GridProject = {
   slug: string;
   title: string;
@@ -13,6 +15,8 @@ export type GridProject = {
   group: "selected" | "earlier";
   /** People named in the description, linked wherever the name appears. */
   collaborators?: { name: string; href: string }[];
+  /** One landscape image, shown under the description. */
+  figure?: FigureData;
 };
 
 /**
@@ -33,6 +37,13 @@ export const gridProjects: GridProject[] = [
     repo: "https://github.com/hjtan03/liftoff",
     group: "selected",
     collaborators: [{ name: "Anthony Yalong", href: "https://github.com/yalongwastaken" }],
+    figure: {
+      src: "/images/liftoff-launch.webp",
+      alt: "Liftoff game screen showing a daily estimation question with a numeric answer field in pixel-art style",
+      width: 1600,
+      height: 912,
+      caption: "One of five daily questions.",
+    },
   },
   {
     slug: "cloud-photo-service",

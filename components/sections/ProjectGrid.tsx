@@ -1,3 +1,4 @@
+import { Figure } from "@/components/Figure";
 import { gridProjects, type GridProject } from "@/lib/data/projects";
 
 const asideOffset = { "--aside-offset": "0.15rem" } as React.CSSProperties;
@@ -34,6 +35,11 @@ function SelectedEntry({ project }: { project: GridProject }) {
       <article className="main">
         <h4 className="text-entry">{project.title}</h4>
         <p className="mt-1 text-[1.0625rem] leading-[1.6]">{withCredits(project.description, project.collaborators)}</p>
+        {project.figure && (
+          <div className="mt-4">
+            <Figure {...project.figure} />
+          </div>
+        )}
         <ul className="stack-list mt-1.5" aria-label="Stack">
           {project.stack.map((item) => (
             <li key={item}>{item}</li>

@@ -16,12 +16,28 @@ stack:
   ]
 summary: "Turns saved travel videos into map pins by extracting places from speech, captions, and on-screen text."
 appStoreUrl: "https://apps.apple.com/us/app/pinpoint-travel-maps/id6805630472"
+figure:
+  src: "/images/pinpoint-2-review.webp"
+  alt: "Review screen listing extracted places under Strong, Likely and Worth-a-look headings, each with an approve control"
+  width: 720
+  height: 1565
+  caption: "Extracted candidates, sorted by confidence, waiting for approval."
 ---
 
 People save travel videos constantly and then never do anything with
 them. A restaurant gets named out loud in a thirty second clip, a
 location tag flashes on screen, and the information sits there in a
 format you can’t search or plan against. Pinpoint pulls it out.
+
+<Figure
+  src="/images/pinpoint-1-share.webp"
+  alt="iOS share sheet over a TikTok video with Pinpoint selected as the destination"
+  width={720}
+  height={1565}
+  caption="Sharing a TikTok post into the app from the iOS share sheet."
+  variant="phone"
+  priority
+/>
 
 A user shares a TikTok or Instagram post from the iOS share sheet. The
 backend creates a job, and a Python worker claims it, fetches the media
@@ -36,6 +52,15 @@ confidence scoring boosts candidates that several independent signals
 agree on. Nothing becomes a pin without the user approving it from a
 review screen that sorts candidates into Strong, Likely, and
 Worth-a-look.
+
+<Figure
+  src="/images/pinpoint-2-review.webp"
+  alt="Review screen listing extracted places under Strong, Likely and Worth-a-look headings, each with an approve control"
+  width={720}
+  height={1565}
+  caption="Extracted candidates, sorted by confidence, waiting for approval."
+  variant="phone"
+/>
 
 The failure mode that drove most of the engineering was bare names
 resolving to the wrong city. A Chicago coffee video produced a confident
@@ -88,6 +113,15 @@ since four characters means something different per script. And a patched
 map library allocating roughly 176,000 style spans for a single long
 route produced a 3.4 GB out-of-memory crash on device, which is now
 capped.
+
+<Figure
+  src="/images/pinpoint-3-map.webp"
+  alt="Map view with approved place pins and a collections list below it"
+  width={720}
+  height={1565}
+  caption="Approved places on the map, grouped into collections."
+  variant="phone"
+/>
 
 Current state: approved by App Review on 11 November 2026 and released
 on the US App Store the following day as version 1.0.0. Getting there

@@ -25,6 +25,14 @@ Claude, which extracts structured filters, and the backend validates
 every field before running it through the same query builder as the
 normal search path. The model never writes SQL.
 
+<Figure
+  src="/images/idx-listings.webp"
+  alt="Property search results page with filters across the top and a column of listing cards with photos and prices"
+  width={1400}
+  height={653}
+  caption="Search results over the 54,000-listing MLS snapshot."
+/>
+
 Most of the real work was in the data. The schema is legacy RETS, which
 means 126 columns in the main table and field names like `L_Keyword2` for
 bedroom count. Listing photos are stored as a JSON string that can be

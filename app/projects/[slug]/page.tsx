@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
+import { Figure } from "@/components/Figure";
 import { IdxArchitecture } from "@/components/IdxArchitecture";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 
@@ -33,7 +34,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
   const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const { content } = await compileMDX({ source: project.body });
+  const { content } = await compileMDX({ source: project.body, components: { Figure } });
   const Diagram = diagrams[project.slug];
 
   return (

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Figure } from "@/components/Figure";
 import { IdxArchitecture } from "@/components/IdxArchitecture";
 import type { Project } from "@/lib/projects";
 
@@ -30,6 +31,11 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
                 </Link>
               </h3>
               <p className="mt-1.5">{project.summary}</p>
+              {project.figure && (
+                <div className="mt-5">
+                  <Figure {...project.figure} variant="phone" />
+                </div>
+              )}
               {diagrams[project.slug] && (
                 <div className="mt-5">
                   {(() => {

@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import type { FigureData } from "@/components/Figure";
 
 const PROJECTS_DIR = path.join(process.cwd(), "content", "projects");
 
@@ -15,6 +16,8 @@ export type ProjectFrontmatter = {
   summary: string;
   /** Public listing, when the project has shipped to a store. */
   appStoreUrl?: string;
+  /** One image for the home featured block. */
+  figure?: FigureData;
 };
 
 export type Project = ProjectFrontmatter & {
@@ -49,6 +52,8 @@ function parseFrontmatter(file: string, data: Record<string, unknown>): ProjectF
     fail(file, 'frontmatter "appStoreUrl" must be an https URL');
   }
 
+  const figure = parseFigure(file, data.figure);
+
   const slug = str("slug");
   const expectedSlug = file.replace(/\.mdx$/, "");
   if (slug !== expectedSlug) fail(file, `frontmatter slug "${slug}" does not match filename`);
@@ -63,7 +68,21 @@ function parseFrontmatter(file: string, data: Record<string, unknown>): ProjectF
     stack: stack as string[],
     summary: str("summary"),
     ...(appStoreUrl ? { appStoreUrl } : {}),
+    ...(figure ? { figure } : {}),
   };
+}
+
+function parseFigure(file: string, raw: unknown): FigureData | undefined {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "object" || raw === null) fail(file, 'frontmatter "figure" must be a map');
+  const f = raw as Record<string, unknown>;
+  for (const key of ["src", "alt", "caption"]) {
+    if (typeof f[key] !== "string" || (f[key] as string).trim() === "") fail(file, `frontmatter "figure.${key}" must be a non-empty string`);
+  }
+  for (const key of ["width", "height"]) {
+    if (typeof f[key] !== "number" || !Number.isFinite(f[key])) fail(file, `frontmatter "figure.${key}" must be a number`);
+  }
+  return { src: f.src as string, alt: f.alt as string, width: f.width as number, height: f.height as number, caption: f.caption as string };
 }
 
 async function readProject(file: string): Promise<Project> {
