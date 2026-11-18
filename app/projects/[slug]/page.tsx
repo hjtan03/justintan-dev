@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
+import { IdxArchitecture } from "@/components/IdxArchitecture";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
+
+/** Diagrams that sit above a writeup body, keyed by project slug. */
+const diagrams: Record<string, React.ComponentType> = {
+  "idx-exchange": IdxArchitecture,
+};
 
 type Params = { slug: string };
 
@@ -28,6 +34,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
   if (!project) notFound();
 
   const { content } = await compileMDX({ source: project.body });
+  const Diagram = diagrams[project.slug];
 
   return (
     <main>
@@ -50,6 +57,11 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
               </p>
             )}
           </header>
+          {Diagram && (
+            <div className="mt-8">
+              <Diagram />
+            </div>
+          )}
           <div className="prose prose-book mt-8">{content}</div>
         </div>
         <ul className="project-stack stack-stack" aria-label="Stack">

@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from "react";
  *
  * Inline SVG so it adapts to light and dark themes, stays crisp at any
  * size, and ships no image bytes. Colors come from the site's tokens
- * with hardcoded fallbacks — rename the custom properties below if
- * yours differ.
+ * (--color-text, --color-text-muted, --color-rule, --color-accent,
+ * --font-sans) with the light palette as hardcoded fallbacks.
  *
  * On scroll into view it traces the request lifecycle once, in order:
  * request, query text, filters, query, rows, response. That sequence is
@@ -187,16 +187,16 @@ export function IdxArchitecture({ animate = true, className }: Props) {
 
         .idx-arch rect {
           fill: none;
-          stroke: var(--color-rule, #E4E3DE);
+          stroke: var(--color-rule, #e0deda);
           stroke-width: 1.25;
         }
 
         .idx-node--accent rect {
-          stroke: var(--color-accent, #15418C);
+          stroke: var(--color-accent, #1e4798);
         }
 
         .idx-node-title {
-          fill: var(--color-text, #1A1A18);
+          fill: var(--color-text, #302d28);
           font-size: 17px;
           font-weight: 600;
           letter-spacing: -0.01em;
@@ -204,27 +204,27 @@ export function IdxArchitecture({ animate = true, className }: Props) {
         }
 
         .idx-node--accent .idx-node-title {
-          fill: var(--color-accent, #15418C);
+          fill: var(--color-accent, #1e4798);
         }
 
         .idx-node-sub {
-          fill: var(--color-muted, #6B6B66);
+          fill: var(--color-text-muted, #66635c);
           font-size: 12.5px;
           text-anchor: middle;
         }
 
         .idx-flow path {
           fill: none;
-          stroke: var(--color-muted, #6B6B66);
+          stroke: var(--color-text-muted, #66635c);
           stroke-width: 1.25;
         }
 
         .idx-arrow-head {
-          fill: var(--color-muted, #6B6B66);
+          fill: var(--color-text-muted, #66635c);
         }
 
         .idx-label {
-          fill: var(--color-muted, #6B6B66);
+          fill: var(--color-text-muted, #66635c);
           font-size: 12.5px;
         }
         .idx-label--end   { text-anchor: end; }
@@ -262,6 +262,15 @@ export function IdxArchitecture({ animate = true, className }: Props) {
           opacity: 1;
           transition: opacity 200ms ease-out;
           transition-delay: calc(520ms + var(--i) * 300ms);
+        }
+
+        /* Below about 640px the 660-unit viewBox renders at roughly half
+           scale, which would take the 12.5px labels under 7px. The type
+           steps up in SVG units so it lands near 9 to 11px on a phone. */
+        @media (max-width: 40rem) {
+          .idx-node-title { font-size: 21px; }
+          .idx-node-sub,
+          .idx-label { font-size: 17px; }
         }
 
         @media (prefers-reduced-motion: reduce) {

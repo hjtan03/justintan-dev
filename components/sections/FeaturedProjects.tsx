@@ -1,5 +1,11 @@
 import Link from "next/link";
+import { IdxArchitecture } from "@/components/IdxArchitecture";
 import type { Project } from "@/lib/projects";
+
+/** Static diagrams shown in a featured block, keyed by project slug. */
+const diagrams: Record<string, React.ComponentType<{ animate?: boolean }>> = {
+  "idx-exchange": IdxArchitecture,
+};
 
 const asideOffset = { "--aside-offset": "0.7rem" } as React.CSSProperties;
 
@@ -24,6 +30,14 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
                 </Link>
               </h3>
               <p className="mt-1.5">{project.summary}</p>
+              {diagrams[project.slug] && (
+                <div className="mt-5">
+                  {(() => {
+                    const Diagram = diagrams[project.slug];
+                    return <Diagram animate={false} />;
+                  })()}
+                </div>
+              )}
               <ul className="mt-1 flex flex-wrap gap-x-5 font-sans text-compact">
                 <li>
                   <Link href={`/projects/${project.slug}`} className="nav-link">
