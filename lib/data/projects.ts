@@ -11,6 +11,8 @@ export type GridProject = {
   url?: string;
   /** "selected" gets the full grid treatment; "earlier" is the dense list under it. */
   group: "selected" | "earlier";
+  /** People named in the description, linked wherever the name appears. */
+  collaborators?: { name: string; href: string }[];
 };
 
 /**
@@ -19,6 +21,39 @@ export type GridProject = {
  * scope that isn't already stated.
  */
 export const gridProjects: GridProject[] = [
+  {
+    slug: "liftoff",
+    title: "Liftoff",
+    context: "Side project with Anthony Yalong",
+    timeframe: "Oct 2026 – present",
+    description:
+      "Daily estimation game, live at dailyliftoff.app since October 2026. Five questions a day that you can reason your way toward, with the working shown afterward so you can see where your estimate drifted. React and TypeScript on Vercel, with Supabase Postgres behind a small API. Each guess is re-scored on the server and written once per player, launch and stage, which keeps forged or repeated submissions out of the crowd percentiles. I own the hosting and infrastructure and drove the scoring, daily-reset and archive design; Anthony Yalong built much of the pixel-art game frontend. Covered by 255 unit tests and 15 Playwright end-to-end tests.",
+    stack: ["React", "TypeScript", "Vercel", "Supabase", "Playwright"],
+    url: "https://dailyliftoff.app",
+    repo: "https://github.com/hjtan03/liftoff",
+    group: "selected",
+    collaborators: [{ name: "Anthony Yalong", href: "https://github.com/yalongwastaken" }],
+  },
+  {
+    slug: "cloud-photo-service",
+    title: "Cloud Photo Service",
+    context: "Northwestern CS 310",
+    timeframe: "2026",
+    description:
+      "Cloud service built from the infrastructure up on AWS: provisioned IAM users and policies, S3 buckets, an RDS MySQL instance and security groups. A Node and Express service ties S3 storage and RDS together with Rekognition label detection, deployed to Elastic Beanstalk through scripted EB CLI workflows, with Python Lambdas behind API Gateway.",
+    stack: [
+      "Node.js",
+      "Express",
+      "AWS S3",
+      "RDS MySQL",
+      "Rekognition",
+      "Elastic Beanstalk",
+      "Lambda",
+      "API Gateway",
+      "IAM",
+    ],
+    group: "selected",
+  },
   {
     slug: "chaiss",
     title: "ChAIss",
