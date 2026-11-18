@@ -1,56 +1,107 @@
-import { gridProjects } from "@/lib/data/projects";
+import { gridProjects, type GridProject } from "@/lib/data/projects";
+
+const asideOffset = { "--aside-offset": "0.15rem" } as React.CSSProperties;
 
 /** "https://dailyliftoff.app/" renders as "dailyliftoff.app". */
 const hostname = (url: string) => new URL(url).hostname.replace(/^www\./, "");
 
-const asideOffset = { "--aside-offset": "0.15rem" } as React.CSSProperties;
+function SelectedEntry({ project }: { project: GridProject }) {
+  return (
+    <li id={project.slug} className="record row" style={asideOffset}>
+      <div className="aside">
+        <p>{project.context}</p>
+        <p>
+          <time>{project.timeframe}</time>
+        </p>
+      </div>
+      <article className="main">
+        <h4 className="text-entry">{project.title}</h4>
+        <p className="mt-1 text-[1.0625rem] leading-[1.6]">{project.description}</p>
+        <ul className="stack-list mt-1.5" aria-label="Stack">
+          {project.stack.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        {(project.url || project.repo) && (
+          <ul className="mt-1 flex flex-wrap gap-x-5 font-sans text-meta">
+            {project.url && (
+              <li>
+                <a href={project.url} className="nav-link" target="_blank" rel="noopener noreferrer">
+                  {hostname(project.url)}
+                </a>
+              </li>
+            )}
+            {project.repo && (
+              <li>
+                <a href={project.repo} className="nav-link" target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </a>
+              </li>
+            )}
+          </ul>
+        )}
+      </article>
+    </li>
+  );
+}
+
+/** Dense: title, context and year on one line, one sentence under it. */
+function EarlierEntry({ project }: { project: GridProject }) {
+  return (
+    <li id={project.slug} className="row">
+      <article className="main">
+        <h4 className="font-sans text-compact font-medium">
+          {project.title}
+          <span className="font-normal text-text-muted">
+            {" "}
+            · {project.context}, <time>{project.timeframe}</time>
+          </span>
+        </h4>
+        <p className="mt-0.5 text-compact">{project.description}</p>
+      </article>
+    </li>
+  );
+}
 
 export function ProjectGrid() {
   // Entries with an empty description are unfinished and must not render.
   const projects = gridProjects.filter((p) => p.description.trim() !== "");
+  const selected = projects.filter((p) => p.group === "selected");
+  const earlier = projects.filter((p) => p.group === "earlier");
   if (projects.length === 0) return null;
 
   return (
     <section id="project-grid" aria-label="More projects" className="page mt-24">
-      <ul>
-        {projects.map((project) => (
-          <li key={project.slug} id={project.slug} className="record row" style={asideOffset}>
-            <div className="aside">
-              <p>{project.context}</p>
-              <p>
-                <time>{project.timeframe}</time>
-              </p>
+      <div className="space-y-16">
+        {selected.length > 0 && (
+          <section aria-labelledby="selected-work-heading">
+            <div className="row">
+              <h3 id="selected-work-heading" className="main font-sans text-meta font-medium text-text-muted">
+                Selected work
+              </h3>
             </div>
-            <article className="main">
-              <h3 className="text-entry">{project.title}</h3>
-              <p className="mt-1 text-[1.0625rem] leading-[1.6]">{project.description}</p>
-              <ul className="stack-list mt-1.5" aria-label="Stack">
-                {project.stack.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              {(project.url || project.repo) && (
-                <ul className="mt-1 flex flex-wrap gap-x-5 font-sans text-meta">
-                  {project.url && (
-                    <li>
-                      <a href={project.url} className="nav-link" target="_blank" rel="noopener noreferrer">
-                        {hostname(project.url)}
-                      </a>
-                    </li>
-                  )}
-                  {project.repo && (
-                    <li>
-                      <a href={project.repo} className="nav-link" target="_blank" rel="noopener noreferrer">
-                        GitHub
-                      </a>
-                    </li>
-                  )}
-                </ul>
-              )}
-            </article>
-          </li>
-        ))}
-      </ul>
+            <ul className="mt-2">
+              {selected.map((project) => (
+                <SelectedEntry key={project.slug} project={project} />
+              ))}
+            </ul>
+          </section>
+        )}
+        {earlier.length > 0 && (
+          <section aria-labelledby="earlier-work-heading">
+            <div className="row">
+              <h3 id="earlier-work-heading" className="main font-sans text-meta font-medium text-text-muted">
+                Earlier work
+              </h3>
+            </div>
+            <ol className="mt-2 space-y-4">
+              {earlier.map((project) => (
+                <EarlierEntry key={project.slug} project={project} />
+              ))}
+            </ol>
+          </section>
+        )}
+      </div>
     </section>
   );
 }

@@ -9,6 +9,8 @@ export type GridProject = {
   repo?: string;
   /** Live site, rendered as its bare hostname. Independent of repo. */
   url?: string;
+  /** "selected" gets the full grid treatment; "earlier" is the dense list under it. */
+  group: "selected" | "earlier";
 };
 
 /**
@@ -26,6 +28,7 @@ export const gridProjects: GridProject[] = [
       "Android chess app that reads a physical board through the camera and plays or analyzes the position. I planned the project and chose the stack: Java calling Python through Chaquopy, python-chess for move generation, and a Roboflow-trained TFLite model for detection. Because detection isn’t reliable enough to trust blindly, the board has a lock/unlock mode so a misread position can be corrected by hand and relocked. I built the UI, settings, and board theming.",
     stack: ["Java", "Android", "Chaquopy", "python-chess", "TFLite", "Roboflow"],
     repo: "https://github.com/hjtan03/ChAIss",
+    group: "selected",
   },
   {
     slug: "maritime-perception",
@@ -35,6 +38,7 @@ export const gridProjects: GridProject[] = [
     description:
       "Computer vision pipeline for detecting and tracking small airborne objects against open sky, still in use at USC. I designed the pipeline structure around existing models with direction from my advisor: YOLOX detection, Real-ESRGAN super-resolution on the crops, ResNet-50 classification, and DeepSORT tracking, chosen over ByteTrack and SORT after comparing all three. Caught a train/validation leak caused by splitting video-sampled frames at the image level, which put near-identical frames on both sides of the split.",
     stack: ["Python", "PyTorch", "YOLOX", "ResNet-50", "DeepSORT", "Real-ESRGAN"],
+    group: "selected",
   },
   {
     slug: "duckiebot",
@@ -44,6 +48,7 @@ export const gridProjects: GridProject[] = [
     description:
       "Autonomous lane-following vehicle built on ROS and Docker, with a perception and control pipeline running on onboard camera input alone.",
     stack: ["ROS", "Docker", "Python", "OpenCV"],
+    group: "earlier",
   },
   {
     slug: "audio-activity-recognition",
@@ -53,6 +58,7 @@ export const gridProjects: GridProject[] = [
     description:
       "ML pipeline classifying environmental audio events including clapping, coughing, alarms, and knocking, reaching 86% classification accuracy using MFCC, FFT, and RMS-based feature extraction.",
     stack: ["Python", "scikit-learn", "MFCC", "FFT"],
+    group: "earlier",
   },
   {
     slug: "nokia-ringtone-player",
@@ -62,5 +68,6 @@ export const gridProjects: GridProject[] = [
     description:
       "RTTTL tone generator with LED indicators on a Nucleo G474RE board, written in C++ and validated against LTSpice simulation.",
     stack: ["C++", "STM32", "LTSpice"],
+    group: "earlier",
   },
 ];
