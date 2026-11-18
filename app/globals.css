@@ -505,6 +505,51 @@
     }
   }
 
+  /* Video facade: poster plus a play control, in place of a live player. */
+  .video-facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: var(--color-rule);
+  }
+  .video-facade img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .video-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .video-play svg {
+    box-sizing: content-box;
+    padding: 1rem;
+    border-radius: 50%;
+    background-color: oklch(17% 0.008 85 / 0.72);
+    fill: oklch(98.5% 0.004 85);
+    transition: background-color 150ms ease;
+  }
+  @media (hover: hover) {
+    .video-facade:hover .video-play svg {
+      background-color: var(--accent-seed);
+    }
+  }
+  .video-facade:focus-visible .video-play svg {
+    background-color: var(--accent-seed);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video-play svg {
+      transition: none;
+    }
+  }
+
   /* MDX writeups and any other running prose. */
   /* Display-size serif: a higher optical size than the pixel size gives
      tighter fit and finer hairlines against the body. */
