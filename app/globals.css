@@ -27,7 +27,7 @@
   /* Selection: a low-chroma tint of the accent, text set explicitly. */
   --color-selection: oklch(90% 0.045 262);
 
-  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-serif: var(--font-newsreader), "Newsreader Fallback", Georgia, serif;
   --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
 
   /* Type scale. Hero name > page title > feature title > lede > body > entry > compact > meta. */
@@ -69,6 +69,36 @@
     --color-text-strong: oklch(95% 0.006 85);
     --color-selection: oklch(36% 0.07 262);
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fallback face for Newsreader while the webfont loads. Metrics are     */
+/* Georgia's, scaled so its frequency-weighted average character width  */
+/* matches Newsreader's (0.4459em vs 0.4081em, so 91.52%), with the     */
+/* vertical metrics overridden to Newsreader's own (ascent 1470,        */
+/* descent 530, gap 0 on a 2000 upem) divided by that same scale.       */
+/* The family name matches the one next/font emits on purpose: the      */
+/* Turbopack loader still writes its Times New Roman face even with     */
+/* adjustFontFallback off, and a later face with the same name and      */
+/* descriptors replaces it.                                             */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia");
+  font-style: normal;
+  size-adjust: 91.52%;
+  ascent-override: 80.31%;
+  descent-override: 28.95%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia Italic"), local("Georgia-Italic");
+  font-style: italic;
+  size-adjust: 91.52%;
+  ascent-override: 80.31%;
+  descent-override: 28.95%;
+  line-gap-override: 0%;
 }
 
 /* ------------------------------------------------------------------ */

@@ -5,12 +5,17 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { site } from "@/lib/data/site";
 import "./globals.css";
 
+// next/font only knows how to match a serif against Times New Roman, and
+// its precomputed size-adjust for that pair (105.48%) overshoots: the
+// fallback ran three lines longer on the Pinpoint writeup. The fallback is
+// hand-written against Georgia in globals.css instead.
 const newsreader = Newsreader({
   subsets: ["latin"],
   style: ["normal", "italic"],
   axes: ["opsz"],
   variable: "--font-newsreader",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 // Self-hosted from the upstream release. Google Fonts' build strips the
