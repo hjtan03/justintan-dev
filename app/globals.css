@@ -766,3 +766,62 @@
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Print. Light colors whatever the theme, no chrome, no split          */
+/* headings, and external links show where they go.                    */
+/* ------------------------------------------------------------------ */
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #fff;
+    --color-rule: #ccc;
+    --color-accent: #1e4798;
+    --color-ring: #1e4798;
+    --color-text-muted: #555;
+    --color-text: #222;
+    --color-text-strong: #000;
+    --color-selection: #ddd;
+  }
+  html {
+    font-size: 11pt;
+  }
+  .site-header,
+  .section-indicator,
+  .video-facade .video-play {
+    display: none;
+  }
+  .hero {
+    min-height: 0;
+    padding-top: 0;
+  }
+  .hero-name,
+  .hero-rule,
+  .hero-lede,
+  .hero-links {
+    animation: none;
+  }
+  .section {
+    margin-top: 3rem;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+  .record,
+  figure {
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+  }
+  a[href^="http"]:not([href*="justintan.dev"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    word-break: break-all;
+  }
+}
