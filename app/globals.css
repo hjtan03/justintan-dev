@@ -204,7 +204,11 @@
     }
   }
 
-  /* Vertical rhythm: big gaps between unlike things. */
+  /* Vertical rhythm, outer >= inner, measured baseline-to-cap rather than
+     box-to-box. Heading to its own body: 0.25-0.5rem box (about 20-26px
+     optical). Body to the item's own footer links: 0.25-0.5rem. Between like
+     items: 2.5rem (records) or 4rem (featured). Between groups: 5-6rem.
+     Between sections: 8rem. Everything is a multiple of 0.25rem. */
   .section {
     margin-top: 6rem;
   }
@@ -218,8 +222,8 @@
      the rule spans the item; in two columns it stays in the main column
      so the margin column stays quiet. */
   .record + .record {
-    margin-top: 1rem;
-    padding-top: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--color-rule);
   }
   @media (min-width: 900px) {
@@ -228,11 +232,11 @@
       border-top: 0;
     }
     .record + .record > .main {
-      padding-top: 1rem;
+      padding-top: 1.25rem;
       border-top: 1px solid var(--color-rule);
     }
     .record + .record > .aside {
-      padding-top: calc(1rem + var(--aside-offset, 0px));
+      padding-top: calc(1.25rem + var(--aside-offset, 0px));
     }
   }
 

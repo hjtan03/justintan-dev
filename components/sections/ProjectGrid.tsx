@@ -8,7 +8,7 @@ export function ProjectGrid() {
   if (projects.length === 0) return null;
 
   return (
-    <section id="project-grid" aria-label="More projects" className="page mt-20">
+    <section id="project-grid" aria-label="More projects" className="page mt-24">
       <ul>
         {projects.map((project) => (
           <li key={project.slug} id={project.slug} className="record row" style={asideOffset}>
@@ -20,14 +20,14 @@ export function ProjectGrid() {
             </div>
             <article className="main">
               <h3 className="text-entry">{project.title}</h3>
-              <p className="mt-2 text-[1.0625rem] leading-[1.6]">{project.description}</p>
-              <ul className="stack-list mt-3" aria-label="Stack">
+              <p className="mt-1 text-[1.0625rem] leading-[1.6]">{project.description}</p>
+              <ul className="stack-list mt-1.5" aria-label="Stack">
                 {project.stack.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
               {project.repo && (
-                <p className="mt-2 font-sans text-meta">
+                <p className="mt-1 font-sans text-meta">
                   <a href={project.repo} className="nav-link" target="_blank" rel="noopener noreferrer">
                     GitHub
                   </a>

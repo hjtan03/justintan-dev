@@ -26,7 +26,7 @@ function EntryList({
           {heading}
         </h3>
       </div>
-      <ol className="mt-3">
+      <ol className="mt-2">
         {entries.map((entry) => (
           <li key={`${entry.org}-${entry.timeframe}`} className="record row" style={asideOffset}>
             <p className="aside">
@@ -60,7 +60,7 @@ export function Experience() {
 
   return (
     <section id="experience" aria-labelledby="experience-heading" className="page section">
-      <div className="space-y-12">
+      <div className="space-y-20">
         <EntryList id="work" heading="Work" entries={experience} sectionHeading={workFirst ? sectionHeading : undefined} />
         <EntryList
           id="education"
