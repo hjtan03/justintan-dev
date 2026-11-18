@@ -8,6 +8,7 @@
 /* Nothing is pure #000 or #fff.                                       */
 /* ------------------------------------------------------------------ */
 :root {
+  color-scheme: light dark;
   --accent-seed: oklch(42% 0.14 262);
 }
 
@@ -23,6 +24,8 @@
   --color-text-muted: oklch(50% 0.012 85);
   --color-text: oklch(30% 0.01 85);
   --color-text-strong: oklch(17% 0.008 85);
+  /* Selection: a low-chroma tint of the accent, text set explicitly. */
+  --color-selection: oklch(90% 0.045 262);
 
   --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
@@ -64,6 +67,7 @@
     --color-text-muted: oklch(68% 0.01 85);
     --color-text: oklch(84% 0.008 85);
     --color-text-strong: oklch(95% 0.006 85);
+    --color-selection: oklch(36% 0.07 262);
   }
 }
 
@@ -77,7 +81,11 @@
     font-family: var(--font-serif);
     font-size: 100%;
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    /* Reserve the scrollbar track so a scrollbar appearing on a short page
+       does not shift the measure. */
+    scrollbar-gutter: stable;
     /* Newsreader's optical size is set explicitly per step rather than left
        on auto. Only the serif has an opsz axis; the sans ignores it. Steps
        above body size set their own value (see .lede). */
@@ -117,14 +125,21 @@
     scroll-padding-top: 4.5rem;
   }
 
+  /* Focus ring as a two-layer box-shadow: a page-colored gap, then the
+     ring. The transparent outline keeps a ring in forced-colors mode,
+     where box-shadow is dropped. */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-bg),
+      0 0 0 4px var(--color-ring);
     border-radius: 2px;
   }
 
   ::selection {
-    background-color: var(--color-rule);
+    background-color: var(--color-selection);
+    color: var(--color-text-strong);
   }
 }
 
@@ -296,10 +311,11 @@
   /* Links inside running text: underlined, text color, accent on hover. */
   .text-link {
     color: inherit;
-    transition: color 120ms ease;
   }
-  .text-link:hover {
-    color: var(--color-accent);
+  @media (hover: hover) {
+    .text-link:hover {
+      color: var(--color-accent);
+    }
   }
 
   /* Large titles that link: accent at rest so they read as clickable
@@ -309,23 +325,37 @@
     text-decoration-line: none;
     text-underline-offset: 0.12em;
   }
-  .title-link:hover,
   .title-link:focus-visible {
     text-decoration-line: underline;
   }
+  @media (hover: hover) {
+    .title-link:hover {
+      text-decoration-line: underline;
+    }
+  }
 
   /* Sticky site header. Background matches the page; the rule appears
-     once the page has scrolled. */
+     once the page has scrolled. The rule is a pseudo-element faded with
+     opacity rather than a border-color transition, so a theme change
+     does not animate it. */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: var(--color-bg);
-    border-bottom: 1px solid transparent;
-    transition: border-color 150ms ease;
   }
-  .site-header[data-scrolled] {
-    border-bottom-color: var(--color-rule);
+  .site-header::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--color-rule);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+  .site-header[data-scrolled]::after {
+    opacity: 1;
   }
   .site-header-inner {
     display: flex;
@@ -341,10 +371,12 @@
     color: var(--color-text);
     font-weight: 500;
     text-decoration-line: none;
-    transition: color 120ms ease, opacity 200ms ease, transform 200ms ease;
+    transition: opacity 200ms ease, transform 200ms ease;
   }
-  .site-header-name:hover {
-    color: var(--color-accent);
+  @media (hover: hover) {
+    .site-header-name:hover {
+      color: var(--color-accent);
+    }
   }
   /* On the home page the name waits until the hero name has scrolled past
      the header. It stays in the DOM and becomes visible again on focus so
@@ -360,8 +392,9 @@
     pointer-events: auto;
   }
   @media (prefers-reduced-motion: reduce) {
-    .site-header-name {
-      transition: color 120ms ease;
+    .site-header-name,
+    .site-header::after {
+      transition: none;
     }
   }
   .site-nav {
@@ -371,11 +404,14 @@
   .site-nav-link {
     color: var(--color-text-muted);
     text-decoration-line: none;
-    transition: color 120ms ease;
   }
-  .site-nav-link:hover,
   .site-nav-link[aria-current] {
     color: var(--color-accent);
+  }
+  @media (hover: hover) {
+    .site-nav-link:hover {
+      color: var(--color-accent);
+    }
   }
   /* Below 700px only the name remains; the page is short enough to scroll. */
   @media (max-width: 699.98px) {
@@ -391,8 +427,10 @@
     font-weight: 500;
     text-decoration-line: none;
   }
-  .nav-link:hover {
-    text-decoration-line: underline;
+  @media (hover: hover) {
+    .nav-link:hover {
+      text-decoration-line: underline;
+    }
   }
 
   /* Inline list of stack items separated by middle dots. */
@@ -454,8 +492,10 @@
   .prose a {
     color: inherit;
   }
-  .prose a:hover {
-    color: var(--color-accent);
+  @media (hover: hover) {
+    .prose a:hover {
+      color: var(--color-accent);
+    }
   }
   .prose code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
