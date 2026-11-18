@@ -567,6 +567,78 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Wayfinding.                                                         */
+/* ------------------------------------------------------------------ */
+
+/* No false floor: the hero grows with the viewport so the first project
+   title always straddles the fold instead of the first screen ending on
+   whitespace. header 3.25rem + hero + section gap + cut = viewport, where
+   the cut is how far above the fold the next section starts. On narrow
+   screens the margin labels stack above the title, so the cut is deeper. */
+.hero {
+  --hero-cut: 7.5rem;
+  /* Capped so a very tall display gets the natural flow back instead of a
+     screen-high void under the links. */
+  min-height: min(calc(100svh - 3.25rem - 6rem - var(--hero-cut)), 52rem);
+}
+/* On short desktop viewports the natural hero is already taller than the
+   rule allows, so the top padding gives way first: 5rem at 650px tall,
+   8rem from about 1070px. */
+@media (min-width: 48rem) {
+  .hero {
+    padding-top: clamp(5rem, 12svh, 8rem);
+  }
+}
+@media (min-width: 900px) {
+  .hero {
+    --hero-cut: 2.5rem;
+    min-height: min(calc(100svh - 3.25rem - 8rem - var(--hero-cut)), 52rem);
+  }
+}
+
+/* Current-section label, fixed in the margin column. It sits where a
+   section's own margin heading lands when that section's top reaches the
+   active line, so the label appears to take over from the heading. */
+.section-indicator {
+  display: none;
+}
+@media (min-width: 900px) {
+  .section-indicator {
+    display: block;
+    position: fixed;
+    /* The box starts at the header's bottom edge so margin text scrolls
+       under it rather than showing in the gap; the cap sits at the active
+       line, 80px, where a section's own heading lands as it takes over. */
+    top: 3.25rem;
+    left: calc(50% - 26.5rem + 1.5rem);
+    width: 10rem;
+    z-index: 5;
+    padding-top: calc(80px - 3.25rem);
+    padding-bottom: 0.625rem;
+    background-color: var(--color-bg);
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-align: right;
+    text-box-trim: trim-start;
+    text-box-edge: cap alphabetic;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease;
+  }
+  .section-indicator[data-visible] {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section-indicator {
+      transition: none;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Hero. The one place the accent appears at size, and the only motion */
 /* on the site: name rises, rule draws, then lede and links fade in.   */
 /* ------------------------------------------------------------------ */

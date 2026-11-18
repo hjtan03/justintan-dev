@@ -4,6 +4,7 @@ import { Experience } from "@/components/sections/Experience";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { Hero } from "@/components/sections/Hero";
 import { ProjectGrid } from "@/components/sections/ProjectGrid";
+import { SectionIndicator } from "@/components/SectionIndicator";
 import { getFeaturedProjects } from "@/lib/projects";
 
 export default async function HomePage() {
@@ -11,6 +12,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <SectionIndicator />
       <Hero />
       <FeaturedProjects projects={featured} />
       <ProjectGrid />
