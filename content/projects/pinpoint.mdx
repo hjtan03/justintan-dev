@@ -15,6 +15,7 @@ stack:
     "Google Places",
   ]
 summary: "Turns saved travel videos into map pins by extracting places from speech, captions, and on-screen text."
+appStoreUrl: "https://apps.apple.com/us/app/pinpoint-travel-maps/id6805630472"
 ---
 
 People save travel videos constantly and then never do anything with
@@ -57,6 +58,18 @@ tuned on single-location videos encodes an assumption about the content,
 and the moment the assumption breaks it fails confidently in the other
 direction.
 
+The subtlest version of that problem never appeared locally at all. A
+bare venue query was being answered relative to the worker’s own IP
+address: replaying the same code from Render’s US-West egress returned a
+restaurant in Oregon, while the same query from an Illinois address
+returned the right Chicago places. The bare name was being injected
+after the model’s city-qualified variants and outranking them, then
+scoring as an exact match and taking the full agreement bonus, which
+produced maximum confidence on a wrong answer. The fix orders qualified
+queries first and the bare name last, and never lets a bare-name hit end
+the search. A qualified exact hit still ends it, because dropping that
+would roughly triple the Places calls per candidate.
+
 The hardest decision with real alternatives was how to read on-screen
 text. A local OCR engine had been built earlier and removed for being too
 heavy. The options were re-adding it, calling a cloud vision API,
@@ -76,11 +89,15 @@ map library allocating roughly 176,000 style spans for a single long
 route produced a 3.4 GB out-of-memory crash on device, which is now
 capped.
 
-Current state: submitted to the App Store as Pinpoint Travel Maps, with
-TestFlight builds out, error monitoring, Sign in with Apple, and account
-deletion in place. The core loop works reliably on tested posts.
-Extraction quality across the long tail is not yet measured, since the
-eval harness exists but no baseline run has been recorded, and the
-scrapers depend on upstream tools that have broken twice in recent weeks,
-which a daily canary now watches for. Real user numbers and a measured
-accuracy baseline are the next things it needs.
+Current state: approved by App Review on 11 November 2026 and released
+on the US App Store the following day as version 1.0.0. Getting there
+took ten builds of pre-emptive work against specific review guidelines:
+Sign in with Apple, in-app account deletion, a terms page, rejecting
+YouTube links at the backend, and a share-extension crash traced to the
+extension linking Apple Maps while the app itself linked Google Maps.
+The core loop works reliably on tested posts. What isn’t measured is
+extraction accuracy at the venue level: the only real number is zero
+wrong-country results across 61 candidates on 31 posts after the
+geocoding fix, which is country-level correctness on posts I chose
+myself. Three one-word venue names still resolve to the wrong business
+at full confidence, deferred to 1.0.1.

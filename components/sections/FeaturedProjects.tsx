@@ -24,11 +24,20 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
                 </Link>
               </h3>
               <p className="mt-1.5">{project.summary}</p>
-              <p className="mt-1 font-sans text-compact">
-                <Link href={`/projects/${project.slug}`} className="nav-link">
-                  Read the full writeup
-                </Link>
-              </p>
+              <ul className="mt-1 flex flex-wrap gap-x-5 font-sans text-compact">
+                <li>
+                  <Link href={`/projects/${project.slug}`} className="nav-link">
+                    Read the full writeup
+                  </Link>
+                </li>
+                {project.appStoreUrl && (
+                  <li>
+                    <a href={project.appStoreUrl} className="nav-link" target="_blank" rel="noopener noreferrer">
+                      On the App Store
+                    </a>
+                  </li>
+                )}
+              </ul>
               <ul className="stack-list mt-2" aria-label="Stack">
                 {project.stack.map((item) => (
                   <li key={item}>{item}</li>

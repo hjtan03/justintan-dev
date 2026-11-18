@@ -42,6 +42,13 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
           <header>
             <h1 className="text-page-title">{project.title}</h1>
             <p className="lede mt-6 font-serif text-lede italic text-text-muted">{project.summary}</p>
+            {project.appStoreUrl && (
+              <p className="mt-4 font-sans text-compact">
+                <a href={project.appStoreUrl} className="nav-link" target="_blank" rel="noopener noreferrer">
+                  On the App Store
+                </a>
+              </p>
+            )}
           </header>
           <div className="prose prose-book mt-8">{content}</div>
         </div>

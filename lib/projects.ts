@@ -13,6 +13,8 @@ export type ProjectFrontmatter = {
   timeframe: string;
   stack: string[];
   summary: string;
+  /** Public listing, when the project has shipped to a store. */
+  appStoreUrl?: string;
 };
 
 export type Project = ProjectFrontmatter & {
@@ -42,6 +44,11 @@ function parseFrontmatter(file: string, data: Record<string, unknown>): ProjectF
     fail(file, 'frontmatter "stack" must be a non-empty array of strings');
   }
 
+  const appStoreUrl = data.appStoreUrl;
+  if (appStoreUrl !== undefined && (typeof appStoreUrl !== "string" || !/^https:\/\//.test(appStoreUrl))) {
+    fail(file, 'frontmatter "appStoreUrl" must be an https URL');
+  }
+
   const slug = str("slug");
   const expectedSlug = file.replace(/\.mdx$/, "");
   if (slug !== expectedSlug) fail(file, `frontmatter slug "${slug}" does not match filename`);
@@ -55,6 +62,7 @@ function parseFrontmatter(file: string, data: Record<string, unknown>): ProjectF
     timeframe: str("timeframe"),
     stack: stack as string[],
     summary: str("summary"),
+    ...(appStoreUrl ? { appStoreUrl } : {}),
   };
 }
 
