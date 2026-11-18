@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${newsreader.variable} ${instrumentSans.variable}`}>
-      <body className="min-h-dvh bg-bg text-fg">
+      <body className="min-h-dvh bg-bg text-text">
         <SiteHeader />
         {children}
       </body>

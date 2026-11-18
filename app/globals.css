@@ -1,38 +1,28 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/* Palette. Light is the default; dark follows the system preference. */
+/* Color. One warm hue (85) at low chroma for every neutral, so the     */
+/* page reads warm without the grey being nameable. Roles follow the   */
+/* Radix convention; the three text steps are deliberately far apart.  */
+/* Light is the default; dark follows the system preference below.     */
+/* Nothing is pure #000 or #fff.                                       */
 /* ------------------------------------------------------------------ */
 :root {
-  color-scheme: light;
-  --bg: #fcfcfa;
-  --fg: #1a1a18;
-  --muted: #6b6b66;
-  --accent: #15418c;
-  --rule: #e4e3de;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: #15161a;
-    --fg: #e8e8e4;
-    --muted: #9a9a94;
-    --accent: #8aaef2;
-    --rule: #2a2b30;
-  }
+  --accent-seed: oklch(42% 0.14 262);
 }
 
 /* ------------------------------------------------------------------ */
 /* Design tokens exposed to Tailwind utilities.                       */
 /* ------------------------------------------------------------------ */
-@theme inline {
+@theme static {
   --color-*: initial;
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-rule: var(--rule);
+  --color-bg: oklch(98.5% 0.004 85);
+  --color-rule: oklch(90% 0.006 85);
+  --color-ring: var(--accent-seed);
+  --color-accent: var(--accent-seed);
+  --color-text-muted: oklch(50% 0.012 85);
+  --color-text: oklch(30% 0.01 85);
+  --color-text-strong: oklch(17% 0.008 85);
 
   --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
@@ -61,13 +51,29 @@
   --text-meta--line-height: 1.5;
 }
 
+/* Dark: the accent is derived from the light seed rather than reusing its
+   value. +0.08 L (the first guess) only reaches 3.0:1 on this background;
+   +0.24 L clears 4.5:1 with room (5.9:1) and a touch more chroma keeps it
+   from going chalky. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: oklch(19% 0.006 85);
+    --color-rule: oklch(30% 0.007 85);
+    --color-accent: oklch(from var(--accent-seed) calc(l + 0.24) calc(c + 0.01) h);
+    --color-ring: oklch(from var(--accent-seed) calc(l + 0.24) calc(c + 0.01) h);
+    --color-text-muted: oklch(68% 0.01 85);
+    --color-text: oklch(84% 0.008 85);
+    --color-text-strong: oklch(95% 0.006 85);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Base                                                                */
 /* ------------------------------------------------------------------ */
 @layer base {
   html {
     background-color: var(--color-bg);
-    color: var(--color-fg);
+    color: var(--color-text);
     font-family: var(--font-serif);
     font-size: 100%;
     -webkit-font-smoothing: antialiased;
@@ -89,6 +95,7 @@
   h4 {
     font-family: var(--font-sans);
     font-weight: 600;
+    color: var(--color-text-strong);
   }
 
   :where(p) {
@@ -166,7 +173,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
     text-wrap: pretty;
   }
   .aside > * + * {
@@ -174,7 +181,7 @@
   }
   .aside h2 {
     font-weight: 500;
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   /* A section heading followed by a record's own annotations. */
   .aside > h2 + * {
@@ -296,7 +303,7 @@
     line-height: var(--text-meta--line-height);
   }
   .site-header-name {
-    color: var(--color-fg);
+    color: var(--color-text);
     font-weight: 500;
     text-decoration-line: none;
     transition: color 120ms ease, opacity 200ms ease, transform 200ms ease;
@@ -327,7 +334,7 @@
     gap: 1.5rem;
   }
   .site-nav-link {
-    color: var(--color-muted);
+    color: var(--color-text-muted);
     text-decoration-line: none;
     transition: color 120ms ease;
   }
@@ -361,7 +368,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   /* Separator lives inside the preceding item so it never starts a line. */
   .stack-list li:not(:last-child)::after {
@@ -374,7 +381,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   .stack-stack li + li {
     margin-top: 0.125rem;

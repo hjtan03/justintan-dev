@@ -14,7 +14,7 @@ export function YouTubeEmbed({ video }: { video: Video }) {
           allowFullScreen
         />
       </div>
-      <figcaption className="mt-2 font-sans text-meta text-muted">
+      <figcaption className="mt-2 font-sans text-meta text-text-muted">
         {video.title}
         {video.location && `, ${video.location}`}
         {video.year && ` (${video.year})`}

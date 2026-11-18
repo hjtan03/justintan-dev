@@ -22,7 +22,7 @@ function EntryList({
     <section id={id} aria-labelledby={`${id}-heading`}>
       <div className="row">
         {sectionHeading && <div className="aside">{sectionHeading}</div>}
-        <h3 id={`${id}-heading`} className="main font-sans text-meta font-medium text-muted">
+        <h3 id={`${id}-heading`} className="main font-sans text-meta font-medium text-text-muted">
           {heading}
         </h3>
       </div>
@@ -42,7 +42,7 @@ function EntryList({
                   entry.org
                 )}
               </h4>
-              <p className="mt-0.5 font-sans text-meta text-muted">{entry.role}</p>
+              <p className="mt-0.5 font-sans text-meta text-text-muted">{entry.role}</p>
             </div>
           </li>
         ))}
