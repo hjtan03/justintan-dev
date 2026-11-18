@@ -41,7 +41,7 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
         <div className="main">
           <header>
             <h1 className="text-page-title">{project.title}</h1>
-            <p className="mt-6 font-serif text-lede italic text-muted">{project.summary}</p>
+            <p className="lede mt-6 font-serif text-lede italic text-muted">{project.summary}</p>
           </header>
           <div className="prose prose-book mt-8">{content}</div>
         </div>

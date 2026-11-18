@@ -72,6 +72,10 @@
     font-size: 100%;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Newsreader's optical size is set explicitly per step rather than left
+       on auto. Only the serif has an opsz axis; the sans ignores it. Steps
+       above body size set their own value (see .lede). */
+    font-variation-settings: "opsz" 18;
   }
 
   body {
@@ -85,7 +89,20 @@
   h4 {
     font-family: var(--font-sans);
     font-weight: 600;
+  }
+
+  :where(p) {
+    text-wrap: pretty;
+  }
+  /* After the p rule so a lede paragraph balances. */
+  :where(h1, h2, h3, .lede) {
     text-wrap: balance;
+  }
+
+  /* Dates and anything else that sits in an aligned column. Prose keeps
+     proportional figures. */
+  :where(time) {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Anchor targets clear the sticky header. */
@@ -113,6 +130,18 @@
 /* read. Below 900px the margin content stacks above its main content. */
 /* ------------------------------------------------------------------ */
 @layer components {
+  /* Link defaults. :where() keeps them at zero specificity so any class
+     below overrides them. They sit in this layer rather than base because
+     preflight's `a { text-decoration: inherit }` would otherwise win. */
+  :where(a) {
+    text-decoration: underline solid currentColor max(1px, 0.08em);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+  }
+  :where(h1, h2, h3, h4) :where(a) {
+    text-decoration-thickness: max(1px, 0.12em);
+  }
+
   .page {
     width: 100%;
     max-width: calc(10rem + 3rem + 40rem);
@@ -225,28 +254,22 @@
   /* Links inside running text: underlined, text color, accent on hover. */
   .text-link {
     color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-muted);
-    transition: color 120ms ease, text-decoration-color 120ms ease;
+    transition: color 120ms ease;
   }
   .text-link:hover {
     color: var(--color-accent);
-    text-decoration-color: currentColor;
   }
 
   /* Large titles that link: accent at rest so they read as clickable
      without hover, underline on hover and keyboard focus. */
   .title-link {
     color: var(--color-accent);
-    text-decoration: none;
+    text-decoration-line: none;
     text-underline-offset: 0.12em;
   }
   .title-link:hover,
   .title-link:focus-visible {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration-line: underline;
   }
 
   /* Sticky site header. Background matches the page; the rule appears
@@ -275,7 +298,7 @@
   .site-header-name {
     color: var(--color-fg);
     font-weight: 500;
-    text-decoration: none;
+    text-decoration-line: none;
     transition: color 120ms ease, opacity 200ms ease, transform 200ms ease;
   }
   .site-header-name:hover {
@@ -305,7 +328,7 @@
   }
   .site-nav-link {
     color: var(--color-muted);
-    text-decoration: none;
+    text-decoration-line: none;
     transition: color 120ms ease;
   }
   .site-nav-link:hover,
@@ -324,12 +347,10 @@
     color: var(--color-accent);
     font-family: var(--font-sans);
     font-weight: 500;
-    text-decoration: none;
-    text-underline-offset: 0.2em;
+    text-decoration-line: none;
   }
   .nav-link:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
+    text-decoration-line: underline;
   }
 
   /* Inline list of stack items separated by middle dots. */
@@ -375,6 +396,12 @@
   }
 
   /* MDX writeups and any other running prose. */
+  /* Display-size serif: a higher optical size than the pixel size gives
+     tighter fit and finer hairlines against the body. */
+  .lede {
+    font-variation-settings: "opsz" 28;
+  }
+
   .prose {
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
@@ -384,14 +411,9 @@
   }
   .prose a {
     color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-muted);
   }
   .prose a:hover {
     color: var(--color-accent);
-    text-decoration-color: currentColor;
   }
   .prose code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -469,7 +491,6 @@
   font-size: var(--text-lede);
   line-height: var(--text-lede--line-height);
   max-width: 46ch;
-  text-wrap: pretty;
 }
 
 .hero-links {

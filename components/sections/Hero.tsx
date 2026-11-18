@@ -18,7 +18,7 @@ export function Hero() {
         </h1>
         <div className="hero-rule" aria-hidden="true" />
       </div>
-      <p className="hero-lede mt-8">{site.heroLine}</p>
+      <p className="hero-lede lede mt-8">{site.heroLine}</p>
       <ul className="hero-links mt-10 flex flex-wrap gap-x-8 gap-y-2">
         {links.map((link) => (
           <li key={link.label}>

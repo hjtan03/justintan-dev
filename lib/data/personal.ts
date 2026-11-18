@@ -32,7 +32,7 @@ export const contact = {
  */
 export const personalNotes = {
   violin:
-    "I've played violin since I was four. Fourteen years of private study, concertmaster of my high school and all-city orchestras, a Carnegie Hall honors performance in 2019, and roughly 28 solo recitals along the way. I still play: currently second violin in the Northwestern Philharmonia.",
+    "I’ve played violin since I was four. Fourteen years of private study, concertmaster of my high school and all-city orchestras, a Carnegie Hall honors performance in 2019, and roughly 28 solo recitals along the way. I still play: currently second violin in the Northwestern Philharmonia.",
   oneLiner:
-    "Also: soccer in high school, casual chess, and a Rubik's cube I solve slowly.",
+    "Also: soccer in high school, casual chess, and a Rubik’s cube I solve slowly.",
 };
