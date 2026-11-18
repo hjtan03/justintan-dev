@@ -1,40 +1,33 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/* Palette. Light is the default; dark follows the system preference. */
+/* Color. One warm hue (85) at low chroma for every neutral, so the     */
+/* page reads warm without the grey being nameable. Roles follow the   */
+/* Radix convention; the three text steps are deliberately far apart.  */
+/* Light is the default; dark follows the system preference below.     */
+/* Nothing is pure #000 or #fff.                                       */
 /* ------------------------------------------------------------------ */
 :root {
-  color-scheme: light;
-  --bg: #fcfcfa;
-  --fg: #1a1a18;
-  --muted: #6b6b66;
-  --accent: #15418c;
-  --rule: #e4e3de;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: #15161a;
-    --fg: #e8e8e4;
-    --muted: #9a9a94;
-    --accent: #8aaef2;
-    --rule: #2a2b30;
-  }
+  color-scheme: light dark;
+  --accent-seed: oklch(42% 0.14 262);
 }
 
 /* ------------------------------------------------------------------ */
 /* Design tokens exposed to Tailwind utilities.                       */
 /* ------------------------------------------------------------------ */
-@theme inline {
+@theme static {
   --color-*: initial;
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-rule: var(--rule);
+  --color-bg: oklch(98.5% 0.004 85);
+  --color-rule: oklch(90% 0.006 85);
+  --color-ring: var(--accent-seed);
+  --color-accent: var(--accent-seed);
+  --color-text-muted: oklch(50% 0.012 85);
+  --color-text: oklch(30% 0.01 85);
+  --color-text-strong: oklch(17% 0.008 85);
+  /* Selection: a low-chroma tint of the accent, text set explicitly. */
+  --color-selection: oklch(90% 0.045 262);
 
-  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-serif: var(--font-newsreader), "Newsreader Fallback", Georgia, serif;
   --font-sans: var(--font-instrument-sans), system-ui, -apple-system, sans-serif;
 
   /* Type scale. Hero name > page title > feature title > lede > body > entry > compact > meta. */
@@ -61,17 +54,72 @@
   --text-meta--line-height: 1.5;
 }
 
+/* Dark: the accent is derived from the light seed rather than reusing its
+   value. +0.08 L (the first guess) only reaches 3.0:1 on this background;
+   +0.24 L clears 4.5:1 with room (5.9:1) and a touch more chroma keeps it
+   from going chalky. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: oklch(19% 0.006 85);
+    --color-rule: oklch(30% 0.007 85);
+    --color-accent: oklch(from var(--accent-seed) calc(l + 0.24) calc(c + 0.01) h);
+    --color-ring: oklch(from var(--accent-seed) calc(l + 0.24) calc(c + 0.01) h);
+    --color-text-muted: oklch(68% 0.01 85);
+    --color-text: oklch(84% 0.008 85);
+    --color-text-strong: oklch(95% 0.006 85);
+    --color-selection: oklch(36% 0.07 262);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fallback face for Newsreader while the webfont loads. Metrics are     */
+/* Georgia's, scaled so its frequency-weighted average character width  */
+/* matches Newsreader's (0.4459em vs 0.4081em, so 91.52%), with the     */
+/* vertical metrics overridden to Newsreader's own (ascent 1470,        */
+/* descent 530, gap 0 on a 2000 upem) divided by that same scale.       */
+/* The family name matches the one next/font emits on purpose: the      */
+/* Turbopack loader still writes its Times New Roman face even with     */
+/* adjustFontFallback off, and a later face with the same name and      */
+/* descriptors replaces it.                                             */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia");
+  font-style: normal;
+  size-adjust: 91.52%;
+  ascent-override: 80.31%;
+  descent-override: 28.95%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia Italic"), local("Georgia-Italic");
+  font-style: italic;
+  size-adjust: 91.52%;
+  ascent-override: 80.31%;
+  descent-override: 28.95%;
+  line-gap-override: 0%;
+}
+
 /* ------------------------------------------------------------------ */
 /* Base                                                                */
 /* ------------------------------------------------------------------ */
 @layer base {
   html {
     background-color: var(--color-bg);
-    color: var(--color-fg);
+    color: var(--color-text);
     font-family: var(--font-serif);
     font-size: 100%;
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+    /* Reserve the scrollbar track so a scrollbar appearing on a short page
+       does not shift the measure. */
+    scrollbar-gutter: stable;
+    /* Newsreader's optical size is set explicitly per step rather than left
+       on auto. Only the serif has an opsz axis; the sans ignores it. Steps
+       above body size set their own value (see .lede). */
+    font-variation-settings: "opsz" 18;
   }
 
   body {
@@ -85,7 +133,21 @@
   h4 {
     font-family: var(--font-sans);
     font-weight: 600;
+    color: var(--color-text-strong);
+  }
+
+  :where(p) {
+    text-wrap: pretty;
+  }
+  /* After the p rule so a lede paragraph balances. */
+  :where(h1, h2, h3, .lede) {
     text-wrap: balance;
+  }
+
+  /* Dates and anything else that sits in an aligned column. Prose keeps
+     proportional figures. */
+  :where(time) {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Anchor targets clear the sticky header. */
@@ -93,14 +155,21 @@
     scroll-padding-top: 4.5rem;
   }
 
+  /* Focus ring as a two-layer box-shadow: a page-colored gap, then the
+     ring. The transparent outline keeps a ring in forced-colors mode,
+     where box-shadow is dropped. */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-bg),
+      0 0 0 4px var(--color-ring);
     border-radius: 2px;
   }
 
   ::selection {
-    background-color: var(--color-rule);
+    background-color: var(--color-selection);
+    color: var(--color-text-strong);
   }
 }
 
@@ -113,6 +182,18 @@
 /* read. Below 900px the margin content stacks above its main content. */
 /* ------------------------------------------------------------------ */
 @layer components {
+  /* Link defaults. :where() keeps them at zero specificity so any class
+     below overrides them. They sit in this layer rather than base because
+     preflight's `a { text-decoration: inherit }` would otherwise win. */
+  :where(a) {
+    text-decoration: underline solid currentColor max(1px, 0.08em);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+  }
+  :where(h1, h2, h3, h4) :where(a) {
+    text-decoration-thickness: max(1px, 0.12em);
+  }
+
   .page {
     width: 100%;
     max-width: calc(10rem + 3rem + 40rem);
@@ -137,7 +218,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
     text-wrap: pretty;
   }
   .aside > * + * {
@@ -145,7 +226,7 @@
   }
   .aside h2 {
     font-weight: 500;
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   /* A section heading followed by a record's own annotations. */
   .aside > h2 + * {
@@ -161,14 +242,44 @@
     .aside {
       grid-column: 1;
       text-align: right;
-      padding-top: var(--aside-offset, 0px);
     }
     .main {
       grid-column: 2;
     }
   }
 
-  /* Vertical rhythm: big gaps between unlike things. */
+  /* Margin column alignment. The margin label and the first line of the
+     main column share a row top, but each font adds its own half-leading
+     and ascender space above the cap, so the two never line up on their
+     own. Where text-box-trim exists, the first line of each side is
+     trimmed to its cap height and the row top becomes the cap line.
+     Only the start edge is trimmed: trim-both on every stacked margin
+     label would also strip the leading between consecutive labels. */
+  @supports (text-box-trim: trim-start) {
+    .aside > :first-child,
+    .row > .aside:is(p, h2, h3),
+    .row > .main:is(h2, h3, h4, p),
+    .row > .main > :is(h1, h2, h3, h4, p):first-child,
+    .row > .main > :is(ul, ol):first-child > li,
+    .row > .main > header:first-child > h1 {
+      text-box-trim: trim-start;
+      text-box-edge: cap alphabetic;
+    }
+  }
+  /* Fallback: a hand-tuned top offset per row, set by each component. */
+  @supports not (text-box-trim: trim-start) {
+    @media (min-width: 900px) {
+      .aside {
+        padding-top: var(--aside-offset, 0px);
+      }
+    }
+  }
+
+  /* Vertical rhythm, outer >= inner, measured baseline-to-cap rather than
+     box-to-box. Heading to its own body: 0.25-0.5rem box (about 20-26px
+     optical). Body to the item's own footer links: 0.25-0.5rem. Between like
+     items: 2.5rem (records) or 4rem (featured). Between groups: 5-6rem.
+     Between sections: 8rem. Everything is a multiple of 0.25rem. */
   .section {
     margin-top: 6rem;
   }
@@ -182,8 +293,8 @@
      the rule spans the item; in two columns it stays in the main column
      so the margin column stays quiet. */
   .record + .record {
-    margin-top: 1rem;
-    padding-top: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--color-rule);
   }
   @media (min-width: 900px) {
@@ -192,11 +303,16 @@
       border-top: 0;
     }
     .record + .record > .main {
-      padding-top: 1rem;
+      padding-top: 1.25rem;
       border-top: 1px solid var(--color-rule);
     }
     .record + .record > .aside {
-      padding-top: calc(1rem + var(--aside-offset, 0px));
+      padding-top: 1.25rem;
+    }
+    @supports not (text-box-trim: trim-start) {
+      .record + .record > .aside {
+        padding-top: calc(1.25rem + var(--aside-offset, 0px));
+      }
     }
   }
 
@@ -225,42 +341,51 @@
   /* Links inside running text: underlined, text color, accent on hover. */
   .text-link {
     color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-muted);
-    transition: color 120ms ease, text-decoration-color 120ms ease;
   }
-  .text-link:hover {
-    color: var(--color-accent);
-    text-decoration-color: currentColor;
+  @media (hover: hover) {
+    .text-link:hover {
+      color: var(--color-accent);
+    }
   }
 
   /* Large titles that link: accent at rest so they read as clickable
      without hover, underline on hover and keyboard focus. */
   .title-link {
     color: var(--color-accent);
-    text-decoration: none;
+    text-decoration-line: none;
     text-underline-offset: 0.12em;
   }
-  .title-link:hover,
   .title-link:focus-visible {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration-line: underline;
+  }
+  @media (hover: hover) {
+    .title-link:hover {
+      text-decoration-line: underline;
+    }
   }
 
   /* Sticky site header. Background matches the page; the rule appears
-     once the page has scrolled. */
+     once the page has scrolled. The rule is a pseudo-element faded with
+     opacity rather than a border-color transition, so a theme change
+     does not animate it. */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: var(--color-bg);
-    border-bottom: 1px solid transparent;
-    transition: border-color 150ms ease;
   }
-  .site-header[data-scrolled] {
-    border-bottom-color: var(--color-rule);
+  .site-header::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--color-rule);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+  .site-header[data-scrolled]::after {
+    opacity: 1;
   }
   .site-header-inner {
     display: flex;
@@ -273,13 +398,15 @@
     line-height: var(--text-meta--line-height);
   }
   .site-header-name {
-    color: var(--color-fg);
+    color: var(--color-text);
     font-weight: 500;
-    text-decoration: none;
-    transition: color 120ms ease, opacity 200ms ease, transform 200ms ease;
+    text-decoration-line: none;
+    transition: opacity 200ms ease, transform 200ms ease;
   }
-  .site-header-name:hover {
-    color: var(--color-accent);
+  @media (hover: hover) {
+    .site-header-name:hover {
+      color: var(--color-accent);
+    }
   }
   /* On the home page the name waits until the hero name has scrolled past
      the header. It stays in the DOM and becomes visible again on focus so
@@ -295,8 +422,9 @@
     pointer-events: auto;
   }
   @media (prefers-reduced-motion: reduce) {
-    .site-header-name {
-      transition: color 120ms ease;
+    .site-header-name,
+    .site-header::after {
+      transition: none;
     }
   }
   .site-nav {
@@ -304,13 +432,16 @@
     gap: 1.5rem;
   }
   .site-nav-link {
-    color: var(--color-muted);
-    text-decoration: none;
-    transition: color 120ms ease;
+    color: var(--color-text-muted);
+    text-decoration-line: none;
   }
-  .site-nav-link:hover,
   .site-nav-link[aria-current] {
     color: var(--color-accent);
+  }
+  @media (hover: hover) {
+    .site-nav-link:hover {
+      color: var(--color-accent);
+    }
   }
   /* Below 700px only the name remains; the page is short enough to scroll. */
   @media (max-width: 699.98px) {
@@ -324,12 +455,12 @@
     color: var(--color-accent);
     font-family: var(--font-sans);
     font-weight: 500;
-    text-decoration: none;
-    text-underline-offset: 0.2em;
+    text-decoration-line: none;
   }
-  .nav-link:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
+  @media (hover: hover) {
+    .nav-link:hover {
+      text-decoration-line: underline;
+    }
   }
 
   /* Inline list of stack items separated by middle dots. */
@@ -340,7 +471,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   /* Separator lives inside the preceding item so it never starts a line. */
   .stack-list li:not(:last-child)::after {
@@ -353,7 +484,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
-    color: var(--color-muted);
+    color: var(--color-text-muted);
   }
   .stack-stack li + li {
     margin-top: 0.125rem;
@@ -374,7 +505,58 @@
     }
   }
 
+  /* Video facade: poster plus a play control, in place of a live player. */
+  .video-facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: var(--color-rule);
+  }
+  .video-facade img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .video-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .video-play svg {
+    box-sizing: content-box;
+    padding: 1rem;
+    border-radius: 50%;
+    background-color: oklch(17% 0.008 85 / 0.72);
+    fill: oklch(98.5% 0.004 85);
+    transition: background-color 150ms ease;
+  }
+  @media (hover: hover) {
+    .video-facade:hover .video-play svg {
+      background-color: var(--accent-seed);
+    }
+  }
+  .video-facade:focus-visible .video-play svg {
+    background-color: var(--accent-seed);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video-play svg {
+      transition: none;
+    }
+  }
+
   /* MDX writeups and any other running prose. */
+  /* Display-size serif: a higher optical size than the pixel size gives
+     tighter fit and finer hairlines against the body. */
+  .lede {
+    font-variation-settings: "opsz" 28;
+  }
+
   .prose {
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
@@ -384,14 +566,11 @@
   }
   .prose a {
     color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-muted);
   }
-  .prose a:hover {
-    color: var(--color-accent);
-    text-decoration-color: currentColor;
+  @media (hover: hover) {
+    .prose a:hover {
+      color: var(--color-accent);
+    }
   }
   .prose code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -433,6 +612,78 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Wayfinding.                                                         */
+/* ------------------------------------------------------------------ */
+
+/* No false floor: the hero grows with the viewport so the first project
+   title always straddles the fold instead of the first screen ending on
+   whitespace. header 3.25rem + hero + section gap + cut = viewport, where
+   the cut is how far above the fold the next section starts. On narrow
+   screens the margin labels stack above the title, so the cut is deeper. */
+.hero {
+  --hero-cut: 7.5rem;
+  /* Capped so a very tall display gets the natural flow back instead of a
+     screen-high void under the links. */
+  min-height: min(calc(100svh - 3.25rem - 6rem - var(--hero-cut)), 52rem);
+}
+/* On short desktop viewports the natural hero is already taller than the
+   rule allows, so the top padding gives way first: 5rem at 650px tall,
+   8rem from about 1070px. */
+@media (min-width: 48rem) {
+  .hero {
+    padding-top: clamp(5rem, 12svh, 8rem);
+  }
+}
+@media (min-width: 900px) {
+  .hero {
+    --hero-cut: 2.5rem;
+    min-height: min(calc(100svh - 3.25rem - 8rem - var(--hero-cut)), 52rem);
+  }
+}
+
+/* Current-section label, fixed in the margin column. It sits where a
+   section's own margin heading lands when that section's top reaches the
+   active line, so the label appears to take over from the heading. */
+.section-indicator {
+  display: none;
+}
+@media (min-width: 900px) {
+  .section-indicator {
+    display: block;
+    position: fixed;
+    /* The box starts at the header's bottom edge so margin text scrolls
+       under it rather than showing in the gap; the cap sits at the active
+       line, 80px, where a section's own heading lands as it takes over. */
+    top: 3.25rem;
+    left: calc(50% - 26.5rem + 1.5rem);
+    width: 10rem;
+    z-index: 5;
+    padding-top: calc(80px - 3.25rem);
+    padding-bottom: 0.625rem;
+    background-color: var(--color-bg);
+    font-family: var(--font-sans);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-align: right;
+    text-box-trim: trim-start;
+    text-box-edge: cap alphabetic;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease;
+  }
+  .section-indicator[data-visible] {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section-indicator {
+      transition: none;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Hero. The one place the accent appears at size, and the only motion */
 /* on the site: name rises, rule draws, then lede and links fade in.   */
 /* ------------------------------------------------------------------ */
@@ -469,7 +720,6 @@
   font-size: var(--text-lede);
   line-height: var(--text-lede--line-height);
   max-width: 46ch;
-  text-wrap: pretty;
 }
 
 .hero-links {
@@ -514,5 +764,64 @@
   .hero-lede,
   .hero-links {
     animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Print. Light colors whatever the theme, no chrome, no split          */
+/* headings, and external links show where they go.                    */
+/* ------------------------------------------------------------------ */
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #fff;
+    --color-rule: #ccc;
+    --color-accent: #1e4798;
+    --color-ring: #1e4798;
+    --color-text-muted: #555;
+    --color-text: #222;
+    --color-text-strong: #000;
+    --color-selection: #ddd;
+  }
+  html {
+    font-size: 11pt;
+  }
+  .site-header,
+  .section-indicator,
+  .video-facade .video-play {
+    display: none;
+  }
+  .hero {
+    min-height: 0;
+    padding-top: 0;
+  }
+  .hero-name,
+  .hero-rule,
+  .hero-lede,
+  .hero-links {
+    animation: none;
+  }
+  .section {
+    margin-top: 3rem;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+  .record,
+  figure {
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+  }
+  a[href^="http"]:not([href*="justintan.dev"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    word-break: break-all;
   }
 }

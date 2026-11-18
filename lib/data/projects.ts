@@ -20,7 +20,7 @@ export const gridProjects: GridProject[] = [
     context: "USC senior capstone, 5-person team",
     timeframe: "2024 – 2025",
     description:
-      "Android chess app that reads a physical board through the camera and plays or analyzes the position. I planned the project and chose the stack: Java calling Python through Chaquopy, python-chess for move generation, and a Roboflow-trained TFLite model for detection. Because detection isn't reliable enough to trust blindly, the board has a lock/unlock mode so a misread position can be corrected by hand and relocked. I built the UI, settings, and board theming.",
+      "Android chess app that reads a physical board through the camera and plays or analyzes the position. I planned the project and chose the stack: Java calling Python through Chaquopy, python-chess for move generation, and a Roboflow-trained TFLite model for detection. Because detection isn’t reliable enough to trust blindly, the board has a lock/unlock mode so a misread position can be corrected by hand and relocked. I built the UI, settings, and board theming.",
     stack: ["Java", "Android", "Chaquopy", "python-chess", "TFLite", "Roboflow"],
     repo: "https://github.com/hjtan03/ChAIss",
   },

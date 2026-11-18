@@ -10,7 +10,7 @@ const links = [
 
 export function Hero() {
   return (
-    <section id="hero" aria-labelledby="hero-heading" className="page pt-20 sm:pt-28 md:pt-32">
+    <section id="hero" aria-labelledby="hero-heading" className="hero page pt-20 sm:pt-28">
       {/* The rule matches the ink width of the name, not the container. */}
       <div className="max-w-full w-fit">
         <h1 id="hero-heading" className="hero-name">
@@ -18,7 +18,7 @@ export function Hero() {
         </h1>
         <div className="hero-rule" aria-hidden="true" />
       </div>
-      <p className="hero-lede mt-8">{site.heroLine}</p>
+      <p className="hero-lede lede mt-8">{site.heroLine}</p>
       <ul className="hero-links mt-10 flex flex-wrap gap-x-8 gap-y-2">
         {links.map((link) => (
           <li key={link.label}>

@@ -6,7 +6,7 @@ const asideOffset = { "--aside-offset": "0.7rem" } as React.CSSProperties;
 export function FeaturedProjects({ projects }: { projects: Project[] }) {
   return (
     <section id="projects" aria-labelledby="projects-heading" className="page section">
-      <div className="space-y-14">
+      <div className="space-y-16">
         {projects.map((project, index) => (
           <article key={project.slug} className="row" style={asideOffset}>
             <div className="aside">
@@ -23,13 +23,13 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
                   {project.title}
                 </Link>
               </h3>
-              <p className="mt-4">{project.summary}</p>
-              <p className="mt-3 font-sans text-compact">
+              <p className="mt-1.5">{project.summary}</p>
+              <p className="mt-1 font-sans text-compact">
                 <Link href={`/projects/${project.slug}`} className="nav-link">
                   Read the full writeup
                 </Link>
               </p>
-              <ul className="stack-list mt-4" aria-label="Stack">
+              <ul className="stack-list mt-2" aria-label="Stack">
                 {project.stack.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

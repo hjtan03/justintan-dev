@@ -22,11 +22,11 @@ function EntryList({
     <section id={id} aria-labelledby={`${id}-heading`}>
       <div className="row">
         {sectionHeading && <div className="aside">{sectionHeading}</div>}
-        <h3 id={`${id}-heading`} className="main font-sans text-meta font-medium text-muted">
+        <h3 id={`${id}-heading`} className="main font-sans text-meta font-medium text-text-muted">
           {heading}
         </h3>
       </div>
-      <ol className="mt-3">
+      <ol className="mt-2">
         {entries.map((entry) => (
           <li key={`${entry.org}-${entry.timeframe}`} className="record row" style={asideOffset}>
             <p className="aside">
@@ -42,7 +42,7 @@ function EntryList({
                   entry.org
                 )}
               </h4>
-              <p className="mt-0.5 font-sans text-meta text-muted">{entry.role}</p>
+              <p className="mt-0.5 font-sans text-meta text-text-muted">{entry.role}</p>
             </div>
           </li>
         ))}
@@ -60,7 +60,7 @@ export function Experience() {
 
   return (
     <section id="experience" aria-labelledby="experience-heading" className="page section">
-      <div className="space-y-12">
+      <div className="space-y-20">
         <EntryList id="work" heading="Work" entries={experience} sectionHeading={workFirst ? sectionHeading : undefined} />
         <EntryList
           id="education"

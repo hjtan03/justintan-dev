@@ -4,50 +4,59 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { site } from "@/lib/data/site";
+import { useActiveSection } from "@/components/useActiveSection";
 
-/** Offset below which a section counts as the one in view. Matches the header height plus a little. */
-const ACTIVE_OFFSET = 80;
 /** Header height in px, used to treat the hero name as gone once its bottom passes the header. */
 const HEADER_HEIGHT = 52;
+
+const navIds = site.nav.map((item) => item.id);
 
 export function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
   // On the home page the name stays hidden while the hero name is in view.
   const [nameHidden, setNameHidden] = useState(isHome);
+  // Shared with the margin-column indicator: same observer logic, same answer.
+  const active = useActiveSection(navIds, isHome);
 
+  // The hairline under the header appears once the page has scrolled at all.
   useEffect(() => {
     let frame = 0;
-
     const update = () => {
       frame = 0;
       setScrolled(window.scrollY > 2);
-
-      if (!isHome) return;
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-      let current: string | null = null;
-      for (const item of site.nav) {
-        const el = document.getElementById(item.id);
-        if (el && el.getBoundingClientRect().top <= ACTIVE_OFFSET) current = item.id;
-      }
-      if (atBottom) current = site.nav[site.nav.length - 1]?.id ?? current;
-      setActive(current);
     };
-
     const onScroll = () => {
       if (frame === 0) frame = window.requestAnimationFrame(update);
     };
-
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
       if (frame !== 0) window.cancelAnimationFrame(frame);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!isHome) {
+      setNameHidden(false);
+      return;
+    }
+    const hero = document.getElementById("hero-heading");
+    if (!hero) {
+      setNameHidden(false);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Hidden while any part of the hero name is below the header's bottom edge.
+        setNameHidden(entry.isIntersecting || entry.boundingClientRect.top > HEADER_HEIGHT);
+      },
+      { rootMargin: `-${HEADER_HEIGHT}px 0px 0px 0px`, threshold: 0 },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, [isHome]);
 
   useEffect(() => {
