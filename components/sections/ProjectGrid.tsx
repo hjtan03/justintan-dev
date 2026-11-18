@@ -1,5 +1,8 @@
 import { gridProjects } from "@/lib/data/projects";
 
+/** "https://dailyliftoff.app/" renders as "dailyliftoff.app". */
+const hostname = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
 const asideOffset = { "--aside-offset": "0.15rem" } as React.CSSProperties;
 
 export function ProjectGrid() {
@@ -26,12 +29,23 @@ export function ProjectGrid() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              {project.repo && (
-                <p className="mt-1 font-sans text-meta">
-                  <a href={project.repo} className="nav-link" target="_blank" rel="noopener noreferrer">
-                    GitHub
-                  </a>
-                </p>
+              {(project.url || project.repo) && (
+                <ul className="mt-1 flex flex-wrap gap-x-5 font-sans text-meta">
+                  {project.url && (
+                    <li>
+                      <a href={project.url} className="nav-link" target="_blank" rel="noopener noreferrer">
+                        {hostname(project.url)}
+                      </a>
+                    </li>
+                  )}
+                  {project.repo && (
+                    <li>
+                      <a href={project.repo} className="nav-link" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                      </a>
+                    </li>
+                  )}
+                </ul>
               )}
             </article>
           </li>

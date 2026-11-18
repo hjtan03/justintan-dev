@@ -5,7 +5,10 @@ export type GridProject = {
   timeframe: string;
   description: string;
   stack: string[];
+  /** Source, rendered as "GitHub". */
   repo?: string;
+  /** Live site, rendered as its bare hostname. Independent of repo. */
+  url?: string;
 };
 
 /**
