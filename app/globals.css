@@ -197,10 +197,36 @@
     .aside {
       grid-column: 1;
       text-align: right;
-      padding-top: var(--aside-offset, 0px);
     }
     .main {
       grid-column: 2;
+    }
+  }
+
+  /* Margin column alignment. The margin label and the first line of the
+     main column share a row top, but each font adds its own half-leading
+     and ascender space above the cap, so the two never line up on their
+     own. Where text-box-trim exists, the first line of each side is
+     trimmed to its cap height and the row top becomes the cap line.
+     Only the start edge is trimmed: trim-both on every stacked margin
+     label would also strip the leading between consecutive labels. */
+  @supports (text-box-trim: trim-start) {
+    .aside > :first-child,
+    .row > .aside:is(p, h2, h3),
+    .row > .main:is(h2, h3, h4, p),
+    .row > .main > :is(h1, h2, h3, h4, p):first-child,
+    .row > .main > :is(ul, ol):first-child > li,
+    .row > .main > header:first-child > h1 {
+      text-box-trim: trim-start;
+      text-box-edge: cap alphabetic;
+    }
+  }
+  /* Fallback: a hand-tuned top offset per row, set by each component. */
+  @supports not (text-box-trim: trim-start) {
+    @media (min-width: 900px) {
+      .aside {
+        padding-top: var(--aside-offset, 0px);
+      }
     }
   }
 
@@ -236,7 +262,12 @@
       border-top: 1px solid var(--color-rule);
     }
     .record + .record > .aside {
-      padding-top: calc(1.25rem + var(--aside-offset, 0px));
+      padding-top: 1.25rem;
+    }
+    @supports not (text-box-trim: trim-start) {
+      .record + .record > .aside {
+        padding-top: calc(1.25rem + var(--aside-offset, 0px));
+      }
     }
   }
 
